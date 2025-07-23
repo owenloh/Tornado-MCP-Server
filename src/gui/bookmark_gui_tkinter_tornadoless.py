@@ -18,8 +18,6 @@ from tkinter import ttk, messagebox
 import sys
 import copy
 from pathlib import Path
-from typing import Optional
-import pandas as pd
 
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
@@ -408,6 +406,10 @@ class BookmarkGUITkinter:
         ttk.Button(button_frame1, text="Reset to Default", command=self.reset_parameters).grid(row=0, column=0, padx=2)
         ttk.Button(button_frame1, text="Reload Template", command=self.reload_template).grid(row=0, column=1, padx=2)
         
+        # Undo and Redo buttons
+        ttk.Button(button_frame1, text="Undo", command=self.undo_action).grid(row=0, column=2, padx=2)
+        ttk.Button(button_frame1, text="Redo", command=self.redo_action).grid(row=0, column=3, padx=2)
+
         # Quick action buttons - Row 1
         ttk.Button(button_frame2, text="Gain +", command=self.increase_gain).grid(row=0, column=0, padx=2)
         ttk.Button(button_frame2, text="Gain -", command=self.decrease_gain).grid(row=0, column=1, padx=2)
@@ -467,6 +469,87 @@ class BookmarkGUITkinter:
         # Update initial parameter display
         self.update_parameter_display()
         
+    def update_all_controls(self):
+        """Update all sliders and labels to match current_params."""
+        # Update position sliders and labels
+        self.x_var.set(self.current_params.x_position)
+        self.y_var.set(self.current_params.y_position)
+        self.z_var.set(self.current_params.z_position)
+        self.x_label.config(text=f"{self.current_params.x_position:.1f}")
+        self.y_label.config(text=f"{self.current_params.y_position:.1f}")
+        self.z_label.config(text=f"{self.current_params.z_position:.1f}")
+
+        # Update orientation sliders and labels
+        orient = self.current_params.orient or (0, 0, 0)
+        self.rot1_var.set(orient[0])
+        self.rot2_var.set(orient[1])
+        self.rot3_var.set(orient[2])
+        self.rot1_label.config(text=f"{orient[0]:.2f} rad")
+        self.rot2_label.config(text=f"{orient[1]:.2f} rad")
+        self.rot3_label.config(text=f"{orient[2]:.2f} rad")
+
+        # Update scale sliders and labels
+        scale = self.current_params.scale or (1.0, 1.0)
+        self.scale_x_var.set(scale[0])
+        self.scale_y_var.set(scale[1])
+        self.scale_x_label.config(text=f"{scale[0]:.2f}")
+        self.scale_y_label.config(text=f"{scale[1]:.2f}")
+
+        # Update shift sliders and labels
+        shift = self.current_params.shift or (0, 0, 0)
+        self.shift_x_var.set(shift[0])
+        self.shift_y_var.set(shift[1])
+        self.shift_z_var.set(shift[2])
+        self.shift_x_label.config(text=f"{shift[0]:.1f}")
+        self.shift_y_label.config(text=f"{shift[1]:.1f}")
+        self.shift_z_label.config(text=f"{shift[2]:.1f}")
+
+        # Update gain slider and label
+        default_min, default_max = self.engine.default_params.seismic_range
+        default_range = default_max - default_min
+        current_min, current_max = self.current_params.seismic_range
+        current_range = current_max - current_min
+        gain_value = default_range / current_range if current_range != 0 else 1.0
+        self.gain_var.set(gain_value)
+        self.gain_label.config(text=f"{gain_value:.1f}")
+
+        # Update colormap and times sliders and labels
+        self.colormap_var.set(self.current_params.seismic_colormap_index or 3)
+        self.colormap_label.config(text=f"{self.current_params.seismic_colormap_index or 3}")
+        self.times_var.set(self.current_params.seismic_times or 1)
+        self.times_label.config(text=f"{self.current_params.seismic_times or 1}")
+
+        # Update visibility checkboxes
+        self.seismic_var.set(self.current_params.seismic_visible)
+        self.attribute_var.set(self.current_params.attribute_visible)
+        self.horizon_var.set(self.current_params.horizon_visible)
+        self.well_var.set(self.current_params.well_visible)
+        self.x_slice_var.set(self.current_params.x_visible)
+        self.y_slice_var.set(self.current_params.y_visible)
+        self.z_slice_var.set(self.current_params.z_visible)
+
+    def undo_action(self):
+        """Perform undo action using the engine."""
+        if self.engine.can_undo:
+            self.engine.undo()
+            self.current_params = self.engine.curr_params
+            self.update_all_controls()
+            self.update_parameter_display()
+            self.update_status("Undo action performed.")
+        else:
+            messagebox.showinfo("Undo", "No more actions to undo.")
+
+    def redo_action(self):
+        """Perform redo action using the engine."""
+        if self.engine.can_redo:
+            self.engine.redo()
+            self.current_params = self.engine.curr_params
+            self.update_all_controls()
+            self.update_parameter_display()
+            self.update_status("Redo action performed.")
+        else:
+            messagebox.showinfo("Redo", "No more actions to redo.")
+    
     # Callback methods for GUI controls
     def update_position(self, event=None):
         """Update position parameters and regenerate bookmark"""
