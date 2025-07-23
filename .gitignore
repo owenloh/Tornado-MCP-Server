@@ -1,0 +1,15 @@
+# Python cache files
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+
+# IDE/editor config
+.vscode/
+
+# Others
+.cursor_chats/
+.kiro/
+Tornado API documentation/
+Wed TODO.txt
