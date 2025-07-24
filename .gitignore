@@ -13,3 +13,5 @@ __pycache__/
 .kiro/
 Tornado API documentation/
 Wed TODO.txt
+
+firebase_credentials.json

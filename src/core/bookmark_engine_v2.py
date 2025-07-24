@@ -104,23 +104,26 @@ class BookmarkHTMLEngineV2:
 
         if self.tornado:
             try:
-                import vision
-                # ??? import base
-            except:
-                raise ImportError("not in tornado environment, vision module does not exist")
+                # Specific imports from vision module - everything should be in vision
+                from vision import (
+                    BookmarkDisplay, CaptureParameters, 
+                    CaptureFileParameters, captureImage, Window
+                )
+                
+                print("loading seismic")
+                # vision.loadSeismic('a:eamea::trutl07:/seisml_miniproject/original_seismic_w_dipxy')
+                print("seismic loaded")
+            except ImportError:
+                print("Warning: not in tornado environment, vision module does not exist")
+                print("Setting tornado mode to False for testing")
+                self.tornado = False
 
-            # keep it in the class
-            self.vision = vision
-
-            print("loading seismic")
-            self.vision.vision.loadSeismic('a:eamea::trutl07:/seisml_miniproject/original_seismic_w_dipxy')
-            print("seismic loaded")
-
+        if self.tornado:
             # tornado capture
-            self.capture_param_obj = self.vision.CaptureParameters()
+            self.capture_param_obj = CaptureParameters()
 
             # setting saving location for capture
-            file_parameters = self.vision.CaptureFileParameters()
+            file_parameters = CaptureFileParameters()
             file_parameters.setPrefix('test_capture')
             file_parameters.setPath('/tpa/trutl07/Tornado_Agentic/')
             file_parameters.setFormat('png')
@@ -231,13 +234,13 @@ class BookmarkHTMLEngineV2:
         bookmark_file = str(bookmark_path)
 
         if os.path.exists(bookmark_file):
-            bkm = self.vision.BookmarkDisplay()
+            bkm = BookmarkDisplay()
             # after loading bookmark file, the first bookmark inside is used, by name
-            self.bkm.load(bookmark_file)
+            bkm.load(bookmark_file)
             bkmname = bkm.getBookmarkName(0)
             self.capture_param_obj.setDisplayParameters(bkmname)
             # need to add setLocation? and BookmarkLocation() as well
-            self.vision.captureImage(Window.MAIN_VIEW).capture(self.capture_param_obj)
+            captureImage(Window.MAIN_VIEW).capture(self.capture_param_obj)
         else:
             logger.warning(f"Bookmark file '{bookmark_file}' does not exist. Please create it manually in the GUI.")
         
