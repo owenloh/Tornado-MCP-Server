@@ -14,6 +14,10 @@ Task 3.1: Set up Firebase database structure for command queuing
 
 import sys
 from pathlib import Path
+# for firebase environment
+venv_site_packages = Path(__file__).resolve().parent.parent.parent / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
+sys.path.insert(0, str(venv_site_packages))
+
 import json
 import os
 from datetime import datetime, timezone

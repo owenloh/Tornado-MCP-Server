@@ -16,6 +16,12 @@ Task 3.2: Implement tornado_listener.py for continuous command processing
 """
 
 import sys
+from pathlib import Path
+# for firebase environment
+venv_site_packages = Path(__file__).resolve().parent.parent.parent / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
+sys.path.insert(0, str(venv_site_packages))
+
+import sys
 import time
 import json
 import traceback
@@ -28,7 +34,7 @@ import logging
 from datetime import datetime, timezone
 
 # Add src to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 # Import Tornado API modules (these are available directly in Tornado environment)
 try:
@@ -44,7 +50,7 @@ except ImportError:
 
 # Import our bookmark engine and Firebase components
 from core.bookmark_engine_v2 import BookmarkHTMLEngineV2
-from firebase.firebase_config import FirebaseConfig, CommandQueueManager
+from firebase.firebase_config_directimport import FirebaseConfig, CommandQueueManager
 from protocols.jsonrpc_protocol import JSONRPCProtocol, TornadoStateProtocol
 from utils.config_loader import get_config
 
@@ -209,7 +215,10 @@ class TornadoListener:
         """
         try:
             if self.firebase_config and self.firebase_config.db:
+
+                # for firebase environment path
                 from firebase_admin import firestore
+
                 system_ref = self.firebase_config.db.collection('system_status').document('tornado_listener')
                 system_ref.update({
                     'status': status,
@@ -228,7 +237,9 @@ class TornadoListener:
             
             # Close Firebase connections gracefully
             if self.firebase_config and self.firebase_config.app:
+                # for firebase environment path
                 import firebase_admin
+            
                 try:
                     firebase_admin.delete_app(self.firebase_config.app)
                     self.logger.info("Firebase app deleted successfully")

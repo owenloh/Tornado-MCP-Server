@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+# for firebase environment
+venv_site_packages = Path(__file__).resolve().parent.parent.parent / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
+sys.path.insert(0, str(venv_site_packages))
+
+
 from typing import Tuple
 from dataclasses import dataclass
 import xml.etree.ElementTree as ET
