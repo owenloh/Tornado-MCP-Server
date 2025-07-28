@@ -1,0 +1,47 @@
+# Core Firebase and Google packages for Python 3.6.8 compatibility
+firebase-admin==5.4.0
+google-api-core==1.22.4
+# google-generativeai==0.3.2
+protobuf==3.19.4
+
+# HTTP and networking
+# requests==2.25.1
+# urllib3==1.26.18
+# httplib2==0.20.4
+
+# # Cryptography and security
+# cryptography==3.4.8
+# pyasn1==0.4.8
+# pyasn1-modules==0.2.8
+# rsa==4.9
+# cachetools==4.2.4
+
+# # Environment and configuration
+# python-dotenv==0.19.2
+
+# # Data handling and numerical computing
+# # numpy==1.19.5  # Not used in current codebase
+# # pandas==1.1.5  # Not used in current codebase
+# six==1.16.0
+
+# # Async support
+# grpcio==1.46.5
+# grpcio-status==1.46.5
+
+# # Protobuf message types
+# proto-plus==1.22.3
+
+# # Date/time handling
+# pytz==2021.3
+
+# # Certificate handling
+# certifi==2021.10.8
+# charset-normalizer==2.0.12
+# idna==3.4
+
+# For dataclasses backport (Python 3.6 compatibility)
+dataclasses==0.8
+
+# Additional packages that might be needed
+decorator==5.1.1
+setuptools==40.6.2

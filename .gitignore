@@ -2,8 +2,11 @@
 __pycache__/
 *.pyc
 
-# Virtual environments
+# Virtual environments, copy over environments manually if required
 .venv/
+.win-venv/
+.linux-venv/ 
+
 
 # IDE/editor config
 .vscode/
@@ -17,3 +20,4 @@ firebase_credentials.json
 .kiro/
 Tornado API documentation/
 .TODO.txt
+
