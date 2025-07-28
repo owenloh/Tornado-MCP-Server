@@ -8,10 +8,12 @@ __pycache__/
 # IDE/editor config
 .vscode/
 
+# private keys
+.env
+firebase_credentials.json
+
 # Others
 .cursor_chats/
 .kiro/
 Tornado API documentation/
-Wed TODO.txt
-
-firebase_credentials.json
+.TODO.txt

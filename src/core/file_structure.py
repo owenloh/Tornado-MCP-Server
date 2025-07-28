@@ -26,6 +26,7 @@ class FileStructure:
     TEMPLATES_DIR = DATA_DIR / "templates"
     SAMPLES_DIR = DATA_DIR / "samples"
     BOOKMARKS_DIR = DATA_DIR / "bookmarks"
+    CAPTURES_DIR = DATA_DIR / "captures"
     DEMOS_DIR = BOOKMARKS_DIR / "demos"
     
     # Test subdirectories

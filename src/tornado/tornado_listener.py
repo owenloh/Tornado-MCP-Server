@@ -21,9 +21,11 @@ import json
 import traceback
 import os
 import copy
+import uuid
 from pathlib import Path
 from typing import Dict, Any, Optional
 import logging
+from datetime import datetime, timezone
 
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
@@ -43,6 +45,8 @@ except ImportError:
 # Import our bookmark engine and Firebase components
 from core.bookmark_engine_v2 import BookmarkHTMLEngineV2
 from firebase.firebase_config import FirebaseConfig, CommandQueueManager
+from protocols.jsonrpc_protocol import JSONRPCProtocol, TornadoStateProtocol
+from utils.config_loader import get_config
 
 
 class TornadoListener:
@@ -83,11 +87,13 @@ class TornadoListener:
             'zoom_out': self.handle_zoom_out,
             'zoom_reset': self.handle_zoom_reset,
             'undo_action': self.handle_undo_action,
+            'undo': self.handle_undo_action,  # Alias for undo_action
             'redo_action': self.handle_redo_action,
+            'redo': self.handle_redo_action,  # Alias for redo_action
             'reset_parameters': self.handle_reset_parameters,
             'reload_template': self.handle_reload_template,
-            'get_state': self.handle_get_state,
-            'get_templates': self.handle_get_templates
+            'load_template': self.handle_load_template,  # Add missing load_template mapping
+            'query_state': self.handle_query_state
         }
     
     def setup_logging(self):
@@ -113,9 +119,11 @@ class TornadoListener:
             self.logger.info("Initializing seismic view in Tornado...")
             
             if TORNADO_AVAILABLE:
-                # Load seismic data
-                self.logger.info("Loading seismic data...")
-                vision.loadSeismic('a:eamea::trutl07:/seisml_miniproject/original_seismic_w_dipxy')
+                # Load seismic data from config
+                config = get_config()
+                seismic_path = config.get_seismic_path()
+                self.logger.info(f"Loading seismic data from: {seismic_path}")
+                vision.loadSeismic(seismic_path)
                 
                 '''
                 # Show seismic data initially
@@ -180,7 +188,9 @@ class TornadoListener:
             self.logger.info("Initializing bookmark engine...")
             
             # Initialize with Tornado mode based on TORNADO_AVAILABLE
-            self.bookmark_engine = BookmarkHTMLEngineV2("default_bookmark.html", in_tornado=TORNADO_AVAILABLE)
+            config = get_config()
+            default_template = config.get_default_template()
+            self.bookmark_engine = BookmarkHTMLEngineV2(default_template, in_tornado=TORNADO_AVAILABLE)
             
             self.logger.info("✅ Bookmark engine initialized")
             return True
@@ -231,52 +241,92 @@ class TornadoListener:
     def process_command_queue(self):
         """Process pending commands from Firebase queue"""
         try:
+            # Process tornado_requests (state queries, template requests, etc.)
+            self.process_tornado_requests()
+            
             # Get pending commands for current user
             pending_commands = self.queue_manager.get_pending_commands(self.user_id)
             
+            # Limit processing to prevent infinite loops
+            max_commands_per_cycle = 10
+            processed_count = 0
+            
             for command in pending_commands:
+                # Limit processing to prevent infinite loops
+                if processed_count >= max_commands_per_cycle:
+                    self.logger.warning(f"⚠️ Reached max commands per cycle ({max_commands_per_cycle}), will continue next cycle")
+                    break
+                
                 try:
-                    self.logger.info(f"Processing command: {command['command_id']} - {command['method']}")
+                    # Get command ID (could be 'command_id' or 'doc_id')
+                    cmd_id = command.get('command_id') or command.get('doc_id', 'unknown')
+                    method = command.get('method', 'unknown')
+                    
+                    # Skip if command is malformed
+                    if not method or method == 'unknown':
+                        self.logger.error(f"❌ Malformed command, marking as failed: {command}")
+                        if cmd_id != 'unknown':
+                            self.queue_manager.update_command_status(cmd_id, 'failed', error="Malformed command")
+                        processed_count += 1
+                        continue
+                    
+                    self.logger.info(f"Processing command: {cmd_id} - {method}")
                     
                     # Update command status to processing
-                    self.queue_manager.update_command_status(command['command_id'], 'processing')
+                    self.queue_manager.update_command_status(cmd_id, 'processing')
+                    processed_count += 1
                     
                     # Execute the command
                     result = self.execute_command(command)
                     
-                    if result['success']:
-                        # Add current state to result for GUI feedback
-                        result['current_state'] = {
-                            'can_undo': self.bookmark_engine.can_undo,
-                            'can_redo': self.bookmark_engine.can_redo,
-                            'current_params': self.bookmark_engine.curr_params.__dict__
-                        }
-                        
-                        # Update command status to executed
-                        self.queue_manager.update_command_status(
-                            command['command_id'], 
-                            'executed', 
-                            result=result
-                        )
-                        self.logger.info(f"✅ Command {command['command_id']} executed successfully")
+                    # Check if result is JSON-RPC response
+                    if result.get('jsonrpc') == '2.0':
+                        if 'result' in result:
+                            # Success - add current state
+                            result['result']['current_state'] = {
+                                'can_undo': self.bookmark_engine.can_undo,
+                                'can_redo': self.bookmark_engine.can_redo,
+                                'current_params': self.bookmark_engine.curr_params.__dict__
+                            }
+                            
+                            # Update command status to executed
+                            self.queue_manager.update_command_status(
+                                cmd_id, 
+                                'executed', 
+                                result=result
+                            )
+                            self.logger.info(f"✅ Command {cmd_id} executed successfully")
+                        else:
+                            # Error response
+                            self.queue_manager.update_command_status(
+                                cmd_id, 
+                                'failed', 
+                                error=result.get('error', {}).get('message', 'Unknown error')
+                            )
+                            self.logger.error(f"❌ Command {cmd_id} failed: {result.get('error', {}).get('message')}")
                     else:
-                        # Update command status to failed
+                        # Legacy format - treat as error
                         self.queue_manager.update_command_status(
-                            command['command_id'], 
+                            cmd_id, 
                             'failed', 
-                            error=result.get('error', 'Unknown error')
+                            error="Invalid response format"
                         )
-                        self.logger.error(f"❌ Command {command['command_id']} failed: {result.get('error')}")
+                        self.logger.error(f"❌ Command {cmd_id} returned invalid format")
                 
                 except Exception as e:
-                    self.logger.error(f"❌ Error processing command {command.get('command_id', 'unknown')}: {e}")
+                    self.logger.error(f"❌ Error processing command {cmd_id}: {e}")
                     self.logger.error(traceback.format_exc())
                     
-                    # Update command status to failed
-                    if 'command_id' in command:
+                    # Update command status to failed to prevent reprocessing
+                    try:
                         self.queue_manager.update_command_status(
-                            command['command_id'], 
-                            'failed', 
+                            cmd_id, 
+                            'failed',
+                            error=str(e)
+                        )
+                    except Exception as status_error:
+                        self.logger.error(
+                            f"❌ Failed to update command status: {status_error}",
                             error=str(e)
                         )
         
@@ -284,6 +334,74 @@ class TornadoListener:
             self.logger.error(f"❌ Error in process_command_queue: {e}")
             self.logger.error(traceback.format_exc())
     
+    def process_tornado_requests(self):
+        """Process requests from tornado_requests collection"""
+        try:
+            # Check for pending requests
+            request_ref = self.firebase_config.db.collection('tornado_requests').document(self.user_id)
+            request_doc = request_ref.get()
+            
+            if request_doc.exists:
+                request_data = request_doc.to_dict()
+                request_type = request_data.get('type')
+                
+                if request_type == 'get_templates':
+                    # Handle template request
+                    result = self.handle_get_templates({})
+                    
+                    # Send response to tornado_state
+                    state_update = {
+                        'jsonrpc': '2.0',
+                        'method': 'state_update',
+                        'id': str(uuid.uuid4()),
+                        'params': {
+                            'available_templates': result.get('templates', []),
+                            'timestamp': datetime.now(timezone.utc).isoformat()
+                        }
+                    }
+                    
+                    state_ref = self.firebase_config.db.collection('tornado_state').document(self.user_id)
+                    state_ref.set(state_update)
+                    
+                    # Clear the request
+                    request_ref.delete()
+                    self.logger.info(f"📤 Processed template request: {len(result.get('templates', []))} templates")
+                
+                elif request_type == 'get_current_state':
+                    # Handle state request
+                    self.send_state_update()
+                    
+                    # Clear the request
+                    request_ref.delete()
+                    self.logger.info("📤 Processed state request")
+                
+                elif request_type == 'load_template':
+                    # Handle template load request
+                    template_name = request_data.get('template_name')
+                    if template_name:
+                        result = self.handle_load_template({'template_name': template_name})
+                        self.send_state_update()  # Send updated state after template load
+                        
+                        # Clear the request
+                        request_ref.delete()
+                        self.logger.info(f"📤 Processed template load: {template_name}")
+                
+                elif request_type in ['undo', 'redo']:
+                    # Handle undo/redo requests
+                    if request_type == 'undo':
+                        result = self.handle_undo_action({})
+                    else:
+                        result = self.handle_redo_action({})
+                    
+                    self.send_state_update()  # Send updated state after undo/redo
+                    
+                    # Clear the request
+                    request_ref.delete()
+                    self.logger.info(f"📤 Processed {request_type} request")
+                    
+        except Exception as e:
+            self.logger.error(f"Error processing tornado requests: {e}")
+
     def execute_command(self, command: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute a single command using the appropriate handler
@@ -308,19 +426,32 @@ class TornadoListener:
             handler = self.command_methods[method]
             result = handler(params)
             
-            return {
-                'success': True,
-                'result': result,
-                'method': method,
-                'params': params
-            }
+            # Send state update to Firebase after successful command execution
+            self.send_state_update()
+            
+            # Create JSON-RPC success response
+            return JSONRPCProtocol.create_success_response(
+                request_id=command.get('id', 'unknown'),
+                result={
+                    'method': method,
+                    'params': params,
+                    'data': result,
+                    'timestamp': time.time()
+                }
+            ).to_dict()
             
         except Exception as e:
-            return {
-                'success': False,
-                'error': str(e),
-                'traceback': traceback.format_exc()
-            }
+            # Create JSON-RPC error response
+            return JSONRPCProtocol.create_error_response(
+                request_id=command.get('id', 'unknown'),
+                code=JSONRPCProtocol.TORNADO_ERROR,
+                message=str(e),
+                data={
+                    'method': method,
+                    'params': params,
+                    'traceback': traceback.format_exc()
+                }
+            ).to_dict()
     
     # Command handler methods - these call the bookmark engine methods
     
@@ -414,6 +545,9 @@ class TornadoListener:
         y_slice = params.get('y_slice')
         z_slice = params.get('z_slice')
         
+        self.logger.info(f"🔄 Processing slice visibility update: x={x_slice}, y={y_slice}, z={z_slice}")
+        self.logger.info(f"📊 Before update: x_visible={self.bookmark_engine.curr_params.x_visible}, y_visible={self.bookmark_engine.curr_params.y_visible}, z_visible={self.bookmark_engine.curr_params.z_visible}, undo_count={self.bookmark_engine.undo_count}")
+        
         # Use individual toggle_slice_visibility calls for each slice type
         if x_slice is not None:
             self.bookmark_engine.toggle_slice_visibility('x', x_slice)
@@ -423,6 +557,8 @@ class TornadoListener:
             self.bookmark_engine.toggle_slice_visibility('z', z_slice)
             
         self.bookmark_engine.update_params()
+        
+        self.logger.info(f"📊 After update: x_visible={self.bookmark_engine.curr_params.x_visible}, y_visible={self.bookmark_engine.curr_params.y_visible}, z_visible={self.bookmark_engine.curr_params.z_visible}, undo_count={self.bookmark_engine.undo_count}")
         
         return {
             'message': 'Slice visibility updated',
@@ -619,10 +755,14 @@ class TornadoListener:
     
     def handle_undo_action(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Handle undo_action command"""
+        self.logger.info(f"🔄 Processing undo request: can_undo={self.bookmark_engine.can_undo}, undo_count={self.bookmark_engine.undo_count}")
+        
         if self.bookmark_engine.can_undo:
             self.bookmark_engine.undo()
+            self.logger.info(f"✅ Undo performed: new undo_count={self.bookmark_engine.undo_count}")
             return {'message': 'Undo action performed'}
         else:
+            self.logger.warning(f"❌ Cannot undo: undo_count={self.bookmark_engine.undo_count}")
             return {'message': 'No actions to undo'}
     
     def handle_redo_action(self, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -650,6 +790,23 @@ class TornadoListener:
         
         return {'message': 'Template reloaded'}
     
+    def handle_load_template(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle load_template command"""
+        template_name = params.get('template_name', 'default_bookmark.html')
+        
+        # Add .html extension if not present
+        if not template_name.endswith('.html'):
+            template_name = f"{template_name}.html"
+        
+        try:
+            # Load the specified template
+            self.bookmark_engine.load_template(template_name)
+            self.logger.info(f"✅ Template loaded: {template_name}")
+            return {'message': f'Template {template_name} loaded successfully'}
+        except Exception as e:
+            self.logger.error(f"❌ Failed to load template {template_name}: {e}")
+            return {'message': f'Failed to load template {template_name}: {str(e)}'}
+    
     def handle_get_state(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Handle get_state query command"""
         return {
@@ -676,6 +833,74 @@ class TornadoListener:
                 'message': f'Error getting templates: {e}',
                 'templates': []
             }
+    
+    def handle_query_state(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle JSON-RPC state query"""
+        query_type = params.get('query_type', 'current_state')
+        
+        if query_type == 'current_state':
+            return {
+                'curr_params': self.bookmark_engine.curr_params.__dict__,
+                'undo_redo_state': {
+                    'can_undo': self.bookmark_engine.can_undo,
+                    'can_redo': self.bookmark_engine.can_redo,
+                    'undo_count': getattr(self.bookmark_engine, 'undo_count', 0),
+                    'redo_count': getattr(self.bookmark_engine, 'redo_count', 0)
+                },
+                'timestamp': time.time()
+            }
+        elif query_type == 'templates':
+            try:
+                template_dir = self.bookmark_engine.templates_dir
+                templates = [f.stem for f in template_dir.glob("*.html") if f.is_file()]
+                return {
+                    'available_templates': templates,
+                    'timestamp': time.time()
+                }
+            except Exception as e:
+                return {
+                    'available_templates': ['default_view', 'structural_analysis', 'amplitude_analysis'],
+                    'error': str(e),
+                    'timestamp': time.time()
+                }
+        else:
+            return {
+                'error': f'Unknown query type: {query_type}',
+                'timestamp': time.time()
+            }
+    
+    def send_state_update(self):
+        """Send state update to NLP via Firebase using JSON-RPC format"""
+        try:
+            # Create state update using JSON-RPC protocol
+            state_update = TornadoStateProtocol.create_state_update(
+                current_params=self.bookmark_engine.curr_params.__dict__,
+                undo_redo_state={
+                    'can_undo': self.bookmark_engine.can_undo,
+                    'can_redo': self.bookmark_engine.can_redo,
+                    'undo_count': getattr(self.bookmark_engine, 'undo_count', 0),
+                    'redo_count': getattr(self.bookmark_engine, 'redo_count', 0)
+                },
+                available_templates=self.get_available_templates()
+            )
+            
+            # Send to Firebase tornado_state collection
+            state_ref = self.firebase_config.db.collection('tornado_state').document(self.user_id)
+            state_ref.set(state_update)
+            
+            self.logger.info("📤 State update sent to NLP via Firebase")
+            
+        except Exception as e:
+            self.logger.error(f"❌ Error sending state update: {e}")
+    
+    def get_available_templates(self) -> list:
+        """Get list of available templates"""
+        try:
+            template_dir = self.bookmark_engine.templates_dir
+            return [f.stem for f in template_dir.glob("*.html") if f.is_file()]
+        except Exception:
+            # Fallback templates
+            return ['default_view', 'structural_analysis', 'amplitude_analysis', 'frequency_analysis']
     
     def start_listening(self):
         """

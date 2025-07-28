@@ -1,0 +1,6 @@
+{
+  "seismic": {
+    "data_path": "a:eamea::trutl07:/seisml_miniproject/original_seismic_w_dipxy",
+    "default_template": "default_bookmark.html"
+  }
+}

@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 import copy
 import logging
+import os
 from .file_structure import FileStructure
 from .bookmark_tools import BookmarkParameters, BookmarkTemplate
 import re
@@ -85,6 +86,7 @@ class BookmarkHTMLEngineV2:
     def __init__(self, template_name: str = "default_bookmark.html", in_tornado: bool = True):
         self.bookmarks_dir = FileStructure.BOOKMARKS_DIR
         self.templates_dir = FileStructure.TEMPLATES_DIR
+        self.captures_dir = FileStructure.CAPTURES_DIR
         self.temp_bkm_path = self.bookmarks_dir / "TEMP_BKM.html"
 
         self.master_template = None
@@ -98,6 +100,8 @@ class BookmarkHTMLEngineV2:
         
         # Store the default params from the loaded template
         self.default_params = copy.deepcopy(self.curr_params)
+        
+        logger.info(f"Initialization: loaded template, history_length={len(self.history)}, index={self.history_index}")
 
         # store whether we are actively controlling tornado or just the html file
         self.tornado = in_tornado
@@ -106,13 +110,13 @@ class BookmarkHTMLEngineV2:
             try:
                 # Specific imports from vision module - everything should be in vision
                 from vision import (
-                    BookmarkDisplay, CaptureParameters, 
+                    BookmarkDisplay, BookmarkLocation, CaptureParameters, 
                     CaptureFileParameters, captureImage, Window
                 )
                 
-                print("loading seismic")
+                # print("loading seismic")
                 # vision.loadSeismic('a:eamea::trutl07:/seisml_miniproject/original_seismic_w_dipxy')
-                print("seismic loaded")
+                # print("seismic loaded")
             except ImportError:
                 print("Warning: not in tornado environment, vision module does not exist")
                 print("Setting tornado mode to False for testing")
@@ -125,12 +129,14 @@ class BookmarkHTMLEngineV2:
             # setting saving location for capture
             file_parameters = CaptureFileParameters()
             file_parameters.setPrefix('test_capture')
-            file_parameters.setPath('/tpa/trutl07/Tornado_Agentic/')
-            file_parameters.setFormat('png')
+            file_parameters.setPath(self.captures_dir)
+            file_parameters.setFormat('jpg')
             self.capture_param_obj.setFileParameters(file_parameters)
 
         # update just to make sure
+        logger.info("Calling final update_params() in initialization")
         self.update_params()
+        logger.info(f"Initialization complete: history_length={len(self.history)}, index={self.history_index}, can_undo={self.can_undo}, undo_count={self.undo_count}")
 
 
     def _parse_temp_bkm_to_params(self) -> BookmarkParameters:
@@ -187,9 +193,12 @@ class BookmarkHTMLEngineV2:
         if len(self.history) > 20:
             self.history.pop(0)
             self.history_index -= 1
+        
+        logger.info(f"History updated: length={len(self.history)}, index={self.history_index}, can_undo={self.can_undo}, undo_count={self.undo_count}")
 
     def undo(self):
         """Revert to the previous (template, params) in history, if possible."""
+        logger.info(f"Undo requested: history_length={len(self.history)}, current_index={self.history_index}, can_undo={self.can_undo}")
         if self.history_index > 0:
             self.history_index -= 1
             self.master_template, params = self.history[self.history_index]
@@ -197,7 +206,7 @@ class BookmarkHTMLEngineV2:
             self.update_params_no_history()
             logger.info(f"Undo: Reverted to history index {self.history_index}")
         else:
-            logger.warning("Undo: Already at the oldest state; cannot undo.")
+            logger.warning(f"Undo: Already at the oldest state; cannot undo. history_length={len(self.history)}, index={self.history_index}")
 
     def redo(self):
         """Advance to the next (template, params) in history, if possible."""
@@ -234,12 +243,18 @@ class BookmarkHTMLEngineV2:
         bookmark_file = str(bookmark_path)
 
         if os.path.exists(bookmark_file):
-            bkm = BookmarkDisplay()
+            bkm_dis = BookmarkDisplay()
+            bkm_loc = BookmarkLocation()
             # after loading bookmark file, the first bookmark inside is used, by name
-            bkm.load(bookmark_file)
-            bkmname = bkm.getBookmarkName(0)
-            self.capture_param_obj.setDisplayParameters(bkmname)
-            # need to add setLocation? and BookmarkLocation() as well
+            bkm_dis.load(bookmark_file)
+            bkm_loc.load(bookmark_file)
+            bkm_dis_select = bkm_dis.getBookmarkName(0)
+            bkm_loc_select = bkm_loc.getBookmarkName(0)
+
+            # need to add setLocation and BookmarkLocation() as well
+            self.capture_param_obj.setDisplayParameters(bkm_dis_select)
+            self.capture_param_obj.setLocation(bkm_loc_select)
+            
             captureImage(Window.MAIN_VIEW).capture(self.capture_param_obj)
         else:
             logger.warning(f"Bookmark file '{bookmark_file}' does not exist. Please create it manually in the GUI.")
@@ -255,6 +270,16 @@ class BookmarkHTMLEngineV2:
     def can_redo(self) -> bool:
         """Return True if redo is possible (not at the latest state)."""
         return self.history_index < len(self.history) - 1
+
+    @property
+    def undo_count(self) -> int:
+        """Return the number of undo operations available."""
+        return self.history_index
+
+    @property
+    def redo_count(self) -> int:
+        """Return the number of redo operations available."""
+        return len(self.history) - 1 - self.history_index
 
     def change_colormap(self, colormap_index: int):
         """Change the colormap index in curr_params."""
