@@ -1,23 +1,23 @@
 # Python cache files
 __pycache__/
 *.pyc
+.vscode/
 
 # Virtual environments, copy over environments manually if required
-.venv/
 .win-venv/
 .linux-venv/ 
 
-
-# IDE/editor config
-.vscode/
-
 # private keys
 .env
-firebase_credentials.json
 
 # Others
 .cursor_chats/
 .kiro/
 Tornado API documentation/
 .TODO.txt
+
+# copy over venv instead
+*.zip
+
+.tornado_listener.log
 

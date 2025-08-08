@@ -266,7 +266,7 @@ def main():
     )
     print(f"State Update: {json.dumps(state_update, indent=2)}")
     
-    print("✅ JSON-RPC Protocol test completed")
+    print("JSON-RPC Protocol test completed")
 
 
 if __name__ == "__main__":

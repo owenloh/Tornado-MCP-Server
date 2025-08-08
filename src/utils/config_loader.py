@@ -39,7 +39,7 @@ class ConfigLoader:
         """
         try:
             if not self.config_path.exists():
-                print(f"⚠️ Config file not found: {self.config_path}")
+                print(f"Config file not found: {self.config_path}")
                 print("Using default configuration")
                 self._create_default_config()
                 return False
@@ -47,11 +47,11 @@ class ConfigLoader:
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 self.config = json.load(f)
             
-            print(f"✅ Configuration loaded from {self.config_path}")
+            print(f"Configuration loaded from {self.config_path}")
             return True
             
         except Exception as e:
-            print(f"❌ Error loading config: {e}")
+            print(f"Error loading config: {e}")
             print("Using default configuration")
             self._create_default_config()
             return False

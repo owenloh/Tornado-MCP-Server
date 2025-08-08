@@ -43,7 +43,7 @@ class FileStructure:
         directories = [
             cls.SRC_DIR, cls.DATA_DIR, cls.TESTS_DIR, cls.EXAMPLES_DIR,
             cls.DOCS_DIR, cls.SCRIPTS_DIR, cls.TEMPLATES_DIR, cls.SAMPLES_DIR,
-            cls.BOOKMARKS_DIR, cls.DEMOS_DIR, cls.UNIT_TESTS_DIR,
+            cls.BOOKMARKS_DIR, cls.CAPTURES_DIR, cls.DEMOS_DIR, cls.UNIT_TESTS_DIR,
             cls.INTEGRATION_TESTS_DIR, cls.RESULTS_DIR
         ]
         

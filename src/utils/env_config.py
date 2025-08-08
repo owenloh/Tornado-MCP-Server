@@ -7,8 +7,11 @@ from .env file. Handles only application configuration, not infrastructure.
 """
 
 import os
+import sys
 from pathlib import Path
 from typing import Optional, Dict, Any
+
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent / '.win-venv' / 'Lib' / 'site-packages') )
 from dotenv import load_dotenv
 
 
@@ -42,9 +45,9 @@ class EnvConfig:
         if env_path.exists():
             load_dotenv(env_path)
             if not self._silent:
-                print(f"✅ Loaded environment variables from {env_path}")
+                print(f"Loaded environment variables from {env_path}")
         elif not self._silent:
-            print(f"⚠️ .env file not found at {env_path}")
+            print(f".env file not found at {env_path}")
     
     def _get_env_path(self, env_file: Optional[str]) -> Path:
         """Get path to .env file"""
@@ -62,8 +65,8 @@ class EnvConfig:
         
         if not api_key or api_key.startswith('your_'):
             if not self._silent:
-                print("❌ GEMINI_API_KEY not set in .env file")
-                print("💡 Please add your Gemini API key to .env file:")
+                print("GEMINI_API_KEY not set in .env file")
+                print("Please add your Gemini API key to .env file:")
                 print("   GEMINI_API_KEY=your_actual_api_key_here")
             return None
         
@@ -98,14 +101,14 @@ class EnvConfig:
         
         if missing_vars:
             if not self._silent:
-                print("❌ Missing required environment variables:")
+                print("Missing required environment variables:")
                 for var in missing_vars:
                     print(f"   - {var}")
                 print("\n💡 Please update your .env file with actual values")
             return False
         
         if not self._silent:
-            print("✅ All required environment variables are set")
+            print("All required environment variables are set")
         return True
     
     # Backward compatibility methods (deprecated)
@@ -131,16 +134,16 @@ def main():
     
     # Test modern property-based API
     if config.gemini_api_key:
-        print(f"✅ Gemini API Key: {config.gemini_api_key[:10]}...{config.gemini_api_key[-4:]}")
+        print(f"Gemini API Key: {config.gemini_api_key[:10]}...{config.gemini_api_key[-4:]}")
     else:
-        print("❌ Gemini API Key not available")
+        print("Gemini API Key not available")
     
-    print(f"🔧 Debug Mode: {config.debug_mode}")
-    print(f"📝 Log Level: {config.log_level}")
+    print(f"Debug Mode: {config.debug_mode}")
+    print(f"Log Level: {config.log_level}")
     
     # Test configuration dictionary
     all_config = config.get_all_config()
-    print(f"📋 All Config: {all_config}")
+    print(f"All Config: {all_config}")
     
     # Validate required variables
     config.validate_required_vars()

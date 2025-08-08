@@ -1,8 +1,11 @@
 import sys
 from pathlib import Path
-# for firebase environment
-venv_site_packages = Path(__file__).resolve().parent.parent.parent / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
-sys.path.insert(0, str(venv_site_packages))
+import platform
+
+# Only add linux-venv path if running on Linux with Python 3.6.8
+if platform.system() == 'Linux' and sys.version_info[:2] == (3, 6):
+    venv_site_packages = Path(__file__).resolve().parent.parent.parent / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
+    sys.path.insert(0, str(venv_site_packages))
 
 
 from typing import Tuple

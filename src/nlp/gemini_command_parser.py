@@ -13,7 +13,6 @@ Features:
 - Geophysical domain knowledge
 """
 
-import google.generativeai as genai
 import json
 import os
 from typing import Dict, Any, List, Optional, Tuple
@@ -21,11 +20,15 @@ from dataclasses import dataclass
 from pathlib import Path
 import sys
 
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent / '.win-venv' / 'Lib' / 'site-packages') )
+import google.generativeai as genai
+
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from firebase.firebase_config import CommandQueueManager, FirebaseConfig
-from firebase.state_manager import TornadoStateManager, EnhancedCommandQueueManager
+from database.database_config import DatabaseConfig
+from database.command_queue_manager import CommandQueueManager
+from database.state_manager import TornadoStateManager, EnhancedCommandQueueManager
 
 
 @dataclass
@@ -74,8 +77,8 @@ class SeismicContext:
 class GeminiCommandParser:
     """Gemini-based natural language to JSON-RPC command parser with real-time state"""
     
-    def __init__(self, api_key: str, firebase_config: FirebaseConfig = None):
-        """Initialize Gemini parser with API key and optional Firebase state manager"""
+    def __init__(self, api_key: str, database_config: DatabaseConfig = None):
+        """Initialize Gemini parser with API key and optional database state manager"""
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel('gemini-1.5-flash')
         self.context = SeismicContext()
@@ -84,15 +87,15 @@ class GeminiCommandParser:
         self.clarification_count = 0
         self.max_clarifications = 2
         
-        # Initialize state manager if Firebase is available
+        # Initialize state manager if database is available
         self.state_manager = None
         self.enhanced_queue = None
-        if firebase_config and firebase_config.db:
-            self.state_manager = TornadoStateManager(firebase_config)
-            self.enhanced_queue = EnhancedCommandQueueManager(firebase_config, self.state_manager)
+        if database_config and database_config.is_initialized():
+            self.state_manager = TornadoStateManager(database_config)
+            self.enhanced_queue = EnhancedCommandQueueManager(database_config, self.state_manager)
             # Start monitoring for real-time state updates
             self.state_manager.start_state_monitoring()
-            print("🔄 On-demand state requests enabled")
+            print("On-demand state requests enabled")
         
         # Define seismic navigation functions for Gemini
         self.functions = self._define_seismic_functions()
@@ -164,7 +167,7 @@ class GeminiCommandParser:
                     self.context.gain_value = getattr(self.context, 'gain_value', 1.0)
                 
         except Exception as e:
-            print(f"⚠️ Error updating context from state: {e}")
+            print(f"Error updating context from state: {e}")
     
     def _on_state_update(self, new_state: Dict[str, Any]):
         """Handle real-time state updates from Tornado"""
@@ -241,7 +244,7 @@ class GeminiCommandParser:
                 
             # Silent update - no console clutter for users
         except Exception as e:
-            print(f"⚠️ Error updating context from Firebase state")
+            print(f"⚠️ Error updating context from database state")
         
     def _define_seismic_functions(self) -> List[Dict]:
         """Define all available seismic navigation functions for Gemini"""
@@ -437,16 +440,7 @@ class GeminiCommandParser:
             },
             
             # State Management Functions
-            {
-                "name": "undo_action",
-                "description": "Undo the last action",
-                "parameters": {"type": "OBJECT", "properties": {}}
-            },
-            {
-                "name": "redo_action",
-                "description": "Redo the last undone action",
-                "parameters": {"type": "OBJECT", "properties": {}}
-            },
+
             {
                 "name": "reset_parameters",
                 "description": "Reset all parameters to default values",
@@ -716,13 +710,20 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
     def _handle_info_request(self, function_name: str) -> Dict[str, Any]:
         """Handle information requests (help, current state)"""
         if function_name == "show_current_state":
-            # Use current state from real-time monitoring (more reliable than requesting fresh state)
-            if self.state_manager and self.state_manager.current_state:
-                print("📊 Using current state from real-time monitoring...")
-                fresh_state = self.state_manager.current_state
-                self._update_context_from_state(fresh_state)
-            else:
-                print("⚠️ No current state available from monitoring, using context defaults")
+            # Request fresh state from tornado_listener via database
+            fresh_state = None
+            if self.state_manager:
+                self.state_manager.request_current_state()
+                
+                # Wait for response with retry logic
+                import time
+                for attempt in range(3):
+                    time.sleep(1)
+                    current_state = self.state_manager.current_state
+                    if current_state and isinstance(current_state, dict) and current_state:
+                        fresh_state = current_state
+                        self._update_context_from_state(fresh_state)
+                        break
             
             # Get current template and undo/redo info
             current_template = "Unknown"
@@ -735,15 +736,24 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
                 print("📤 Requesting fresh templates from Tornado...")
                 self.state_manager.request_available_templates()
                 import time
-                time.sleep(1)
-                templates = self.state_manager.get_available_templates()
+                # Wait for response with retry logic
+                templates = []
+                for attempt in range(3):
+                    time.sleep(1)
+                    templates = self.state_manager.get_available_templates()
+                    if templates:
+                        break
+                
                 if templates:
                     current_template = templates[0] if len(templates) == 1 else f"One of {len(templates)} available"
                 
                 # Get undo/redo state from fresh data
-                undo_redo_state = fresh_state.get('undo_redo_state', {})
-                if 'params' in fresh_state:
-                    undo_redo_state = fresh_state['params'].get('undo_redo_state', undo_redo_state)
+                if fresh_state:
+                    undo_redo_state = fresh_state.get('undo_redo_state', {})
+                    if 'params' in fresh_state:
+                        undo_redo_state = fresh_state['params'].get('undo_redo_state', undo_redo_state)
+                else:
+                    undo_redo_state = {}
                 
                 can_undo = undo_redo_state.get('can_undo', False)
                 can_redo = undo_redo_state.get('can_redo', False)
@@ -850,10 +860,14 @@ The system tracks your current position and state in real-time for better relati
             if self.state_manager:
                 print("📤 Requesting fresh templates from Tornado...")
                 self.state_manager.request_available_templates()
-                # Wait briefly for response
+                # Wait for response with retry logic
                 import time
-                time.sleep(1)
-                templates = self.state_manager.get_available_templates()
+                templates = []
+                for attempt in range(3):
+                    time.sleep(1)
+                    templates = self.state_manager.get_available_templates()
+                    if templates:
+                        break
             
             if templates:
                 template_list = "\n".join([f"  • {template}" for template in templates])
@@ -904,7 +918,7 @@ The system tracks your current position and state in real-time for better relati
             
             return {
                 "type": "info",
-                "message": "❌ Cannot check undo/redo status - Firebase not connected"
+                "message": "❌ Cannot check undo/redo status - database not connected"
             }
     
     def _handle_special_command(self, function_name: str, args: Dict) -> Dict[str, Any]:
@@ -1253,10 +1267,8 @@ The system tracks your current position and state in real-time for better relati
                 feedback_parts.append(f"Hiding: {', '.join(hidden_items)}")
             return "; ".join(feedback_parts) if feedback_parts else "Updating data visibility"
         
-        elif function_name == "undo_action":
-            return "Undoing last action"
-        elif function_name == "redo_action":
-            return "Redoing last undone action"
+
+
         elif function_name == "reset_parameters":
             return "Resetting all parameters to defaults"
         

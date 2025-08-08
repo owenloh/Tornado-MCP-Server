@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 """
-Tornado Listener Service for Processing Firebase Command Queue
+Tornado Listener Service for Processing SQLite Command Queue
 
-This script runs continuously inside Tornado and processes commands from Firebase queue.
+This script runs continuously inside Tornado and processes commands from SQLite database.
 It must never terminate or Tornado will close.
 
 Task 3.2: Implement tornado_listener.py for continuous command processing
 - Create main listener loop that never exits (critical for Tornado)
 - Implement initialization sequence (load seismic data, set default view)
-- Implement Firebase queue polling with error handling
+- Implement SQLite database polling with error handling
 - Add command deserialization and validation
 - Integrate bookmark manipulation functions from Stage 1
-- Add command status reporting back to Firebase
+- Add command status reporting back to SQLite database
 - Include comprehensive error handling and logging
 """
 
 import sys
 from pathlib import Path
-# for firebase environment
-venv_site_packages = Path(__file__).resolve().parent.parent.parent / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
+import platform
+
+venv_site_packages = Path.cwd().resolve() / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
 sys.path.insert(0, str(venv_site_packages))
 
 import sys
@@ -34,7 +35,7 @@ import logging
 from datetime import datetime, timezone
 
 # Add src to path for imports
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path.cwd().resolve()/ 'src'))
 
 # Import Tornado API modules (these are available directly in Tornado environment)
 try:
@@ -48,25 +49,28 @@ except ImportError:
     print("Warning: Tornado API not available - running in development mode")
     TORNADO_AVAILABLE = False
 
-# Import our bookmark engine and Firebase components
+# Import our bookmark engine and Database components
 from core.bookmark_engine_v2 import BookmarkHTMLEngineV2
-from firebase.firebase_config_directimport import FirebaseConfig, CommandQueueManager
+from database.database_config import DatabaseConfig
+from database.command_queue_manager import CommandQueueManager
+from database.state_manager import TornadoStateManager
 from protocols.jsonrpc_protocol import JSONRPCProtocol, TornadoStateProtocol
 from utils.config_loader import get_config
 
 
 class TornadoListener:
     """
-    Tornado listener service that processes commands from Firebase queue
+    Tornado listener service that processes commands from SQLite database
     
     This service runs continuously inside Tornado and must never terminate.
-    It polls Firebase for new commands and executes them using the bookmark engine.
+    It polls SQLite database for new commands and executes them using the bookmark engine.
     """
     
     def __init__(self):
         """Initialize Tornado listener service"""
-        self.firebase_config = None
+        self.database_config = None
         self.queue_manager = None
+        self.state_manager = None
         self.bookmark_engine = None
         self.running = False
         self.user_id = "test_user_001"  # Default user for testing
@@ -103,13 +107,16 @@ class TornadoListener:
         }
     
     def setup_logging(self):
+        for h in logging.root.handlers[:]:
+            logging.root.removeHandler(h)
+
         """Setup logging for the listener service"""
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.FileHandler('tornado_listener.log'),
-                logging.StreamHandler(sys.stdout)
+                logging.FileHandler('tornado_listener.log')# ,
+                # logging.StreamHandler(sys.stdout)
             ]
         )
         self.logger = logging.getLogger('TornadoListener')
@@ -156,23 +163,24 @@ class TornadoListener:
             self.logger.error(traceback.format_exc())
             return False
     
-    def initialize_firebase(self) -> bool:
+    def initialize_database(self) -> bool:
         """
-        Initialize Firebase connection and command queue manager
+        Initialize SQLite database connection and command queue manager
         
         Returns:
             bool: True if initialization successful
         """
         try:
-            self.logger.info("Initializing Firebase connection...")
+            self.logger.info("Initializing SQLite database connection...")
             
-            self.firebase_config = FirebaseConfig()
-            if not self.firebase_config.initialize_firebase():
-                self.logger.error("Failed to initialize Firebase")
+            self.database_config = DatabaseConfig()
+            if not self.database_config.initialize_database():
+                self.logger.error("Failed to initialize SQLite database")
                 return False
             
-            self.queue_manager = CommandQueueManager(self.firebase_config)
-            self.logger.info("✅ Firebase connection established")
+            self.queue_manager = CommandQueueManager()
+            self.state_manager = TornadoStateManager(self.database_config)
+            self.logger.info("✅ SQLite database connection established")
             
             # Update system status to online
             self.update_system_status('online')
@@ -180,7 +188,7 @@ class TornadoListener:
             return True
             
         except Exception as e:
-            self.logger.error(f"❌ Error initializing Firebase: {e}")
+            self.logger.error(f"❌ Error initializing SQLite database: {e}")
             return False
     
     def initialize_bookmark_engine(self) -> bool:
@@ -208,49 +216,51 @@ class TornadoListener:
     
     def update_system_status(self, status: str):
         """
-        Update system status in Firebase
+        Update system status in SQLite database
         
         Args:
             status: Current system status (online, offline, error)
         """
         try:
-            if self.firebase_config and self.firebase_config.db:
-
-                # for firebase environment path
-                from firebase_admin import firestore
-
-                system_ref = self.firebase_config.db.collection('system_status').document('tornado_listener')
-                system_ref.update({
-                    'status': status,
-                    'last_heartbeat': firestore.SERVER_TIMESTAMP
-                })
+            if self.database_config and self.database_config.db:
+                timestamp = datetime.now(timezone.utc).isoformat()
+                
+                # Update system status in SQLite
+                query = '''
+                    INSERT OR REPLACE INTO system_status (component, status, last_update, data)
+                    VALUES (?, ?, ?, ?)
+                '''
+                
+                data = json.dumps({'user_id': self.user_id})
+                self.database_config.db.execute_query(
+                    query, 
+                    ('tornado_listener', status, timestamp, data)
+                )
+                
         except Exception as e:
             self.logger.warning(f"Failed to update system status: {e}")
     
     def cleanup(self):
-        """Clean shutdown of Firebase connections and resources"""
+        """Clean shutdown of database connections and resources"""
         try:
             self.logger.info("Cleaning up resources...")
             
             # Update status to offline
             self.update_system_status('offline')
             
-            # Close Firebase connections gracefully
-            if self.firebase_config and self.firebase_config.app:
-                # for firebase environment path
-                import firebase_admin
-            
+            # Close database connections gracefully
+            if self.database_config:
                 try:
-                    firebase_admin.delete_app(self.firebase_config.app)
-                    self.logger.info("Firebase app deleted successfully")
+                    self.database_config.cleanup()
+                    self.logger.info("✅ Database connection closed")
                 except Exception as e:
-                    self.logger.warning(f"Error deleting Firebase app: {e}")
+                    self.logger.error(f"Error closing database: {e}")
                     
         except Exception as e:
             self.logger.warning(f"Error during cleanup: {e}")
     
     def process_command_queue(self):
-        """Process pending commands from Firebase queue"""
+        """Process pending commands from database queue"""
         try:
             # Process tornado_requests (state queries, template requests, etc.)
             self.process_tornado_requests()
@@ -277,14 +287,22 @@ class TornadoListener:
                     if not method or method == 'unknown':
                         self.logger.error(f"❌ Malformed command, marking as failed: {command}")
                         if cmd_id != 'unknown':
-                            self.queue_manager.update_command_status(cmd_id, 'failed', error="Malformed command")
+                            try:
+                                self.queue_manager.update_command_status(cmd_id, 'failed', error="Malformed command")
+                            except Exception as status_error:
+                                self.logger.warning(f"⚠️ Could not update status to failed for {cmd_id}: {status_error}")
                         processed_count += 1
                         continue
                     
                     self.logger.info(f"Processing command: {cmd_id} - {method}")
                     
-                    # Update command status to processing
-                    self.queue_manager.update_command_status(cmd_id, 'processing')
+                    # Update command status to processing (don't fail if this fails)
+                    try:
+                        # Mark processing start time to prevent duplicate processing
+                        self.queue_manager.mark_command_processing(cmd_id)
+                        self.queue_manager.update_command_status(cmd_id, 'processing')
+                    except Exception as status_error:
+                        self.logger.warning(f"⚠️ Could not update status to processing for {cmd_id}: {status_error}")
                     processed_count += 1
                     
                     # Execute the command
@@ -300,12 +318,15 @@ class TornadoListener:
                                 'current_params': self.bookmark_engine.curr_params.__dict__
                             }
                             
-                            # Update command status to executed
-                            self.queue_manager.update_command_status(
-                                cmd_id, 
-                                'executed', 
-                                result=result
-                            )
+                            # Update command status to executed (don't fail if this fails)
+                            try:
+                                self.queue_manager.update_command_status(
+                                    cmd_id, 
+                                    'executed', 
+                                    result=result
+                                )
+                            except Exception as status_error:
+                                self.logger.warning(f"⚠️ Could not update status to executed for {cmd_id}: {status_error}")
                             self.logger.info(f"✅ Command {cmd_id} executed successfully")
                         else:
                             # Error response
@@ -346,44 +367,38 @@ class TornadoListener:
             self.logger.error(traceback.format_exc())
     
     def process_tornado_requests(self):
-        """Process requests from tornado_requests collection"""
+        """Process requests from tornado_requests table"""
         try:
-            # Check for pending requests
-            request_ref = self.firebase_config.db.collection('tornado_requests').document(self.user_id)
-            request_doc = request_ref.get()
+            if not self.state_manager:
+                return
             
-            if request_doc.exists:
-                request_data = request_doc.to_dict()
-                request_type = request_data.get('type')
+            # Get pending requests
+            pending_requests = self.state_manager.get_pending_requests(self.user_id)
+            
+            for request in pending_requests:
+                request_id = request['id']
+                request_type = request['type']
+                request_data = request['data']
                 
                 if request_type == 'get_templates':
                     # Handle template request
                     result = self.handle_get_templates({})
                     
-                    # Send response to tornado_state
-                    state_update = {
-                        'jsonrpc': '2.0',
-                        'method': 'state_update',
-                        'id': str(uuid.uuid4()),
-                        'params': {
-                            'available_templates': result.get('templates', []),
-                            'timestamp': datetime.now(timezone.utc).isoformat()
-                        }
-                    }
+                    # Send response via state update
+                    state_update = TornadoStateProtocol.create_state_update(
+                        current_params={},
+                        undo_redo_state={},
+                        available_templates=result.get('templates', [])
+                    )
                     
-                    state_ref = self.firebase_config.db.collection('tornado_state').document(self.user_id)
-                    state_ref.set(state_update)
+                    # Update tornado_state with template info
+                    self.state_manager.update_state(state_update)
                     
-                    # Clear the request
-                    request_ref.delete()
                     self.logger.info(f"📤 Processed template request: {len(result.get('templates', []))} templates")
                 
                 elif request_type == 'get_current_state':
                     # Handle state request
                     self.send_state_update()
-                    
-                    # Clear the request
-                    request_ref.delete()
                     self.logger.info("📤 Processed state request")
                 
                 elif request_type == 'load_template':
@@ -392,9 +407,6 @@ class TornadoListener:
                     if template_name:
                         result = self.handle_load_template({'template_name': template_name})
                         self.send_state_update()  # Send updated state after template load
-                        
-                        # Clear the request
-                        request_ref.delete()
                         self.logger.info(f"📤 Processed template load: {template_name}")
                 
                 elif request_type in ['undo', 'redo']:
@@ -405,11 +417,11 @@ class TornadoListener:
                         result = self.handle_redo_action({})
                     
                     self.send_state_update()  # Send updated state after undo/redo
-                    
-                    # Clear the request
-                    request_ref.delete()
                     self.logger.info(f"📤 Processed {request_type} request")
-                    
+                
+                # Mark request as processed
+                self.state_manager.mark_request_processed(request_id)
+                
         except Exception as e:
             self.logger.error(f"Error processing tornado requests: {e}")
 
@@ -418,7 +430,7 @@ class TornadoListener:
         Execute a single command using the appropriate handler
         
         Args:
-            command: Command data from Firebase
+            command: Command data from database
             
         Returns:
             dict: Execution result with success status and data/error
@@ -437,7 +449,7 @@ class TornadoListener:
             handler = self.command_methods[method]
             result = handler(params)
             
-            # Send state update to Firebase after successful command execution
+            # Send state update to database after successful command execution
             self.send_state_update()
             
             # Create JSON-RPC success response
@@ -472,8 +484,14 @@ class TornadoListener:
         y = params.get('y') 
         z = params.get('z')
         
+        # Debug logging for history tracking
+        self.logger.info(f"🔍 BEFORE position update: history_length={len(self.bookmark_engine.history)}, index={self.bookmark_engine.history_index}, undo_count={self.bookmark_engine.undo_count}")
+        
         self.bookmark_engine.change_slices_position(x, y, z)
         self.bookmark_engine.update_params()
+        
+        # Debug logging after update
+        self.logger.info(f"🔍 AFTER position update: history_length={len(self.bookmark_engine.history)}, index={self.bookmark_engine.history_index}, undo_count={self.bookmark_engine.undo_count}")
         
         return {
             'message': f'Position updated to X={x}, Y={y}, Z={z}',
@@ -768,8 +786,14 @@ class TornadoListener:
         """Handle undo_action command"""
         self.logger.info(f"🔄 Processing undo request: can_undo={self.bookmark_engine.can_undo}, undo_count={self.bookmark_engine.undo_count}")
         
+        # Debug logging before undo
+        self.logger.info(f"🔍 BEFORE undo: history_length={len(self.bookmark_engine.history)}, index={self.bookmark_engine.history_index}, undo_count={self.bookmark_engine.undo_count}")
+        
         if self.bookmark_engine.can_undo:
             self.bookmark_engine.undo()
+            
+            # Debug logging after undo
+            self.logger.info(f"🔍 AFTER undo: history_length={len(self.bookmark_engine.history)}, index={self.bookmark_engine.history_index}, undo_count={self.bookmark_engine.undo_count}")
             self.logger.info(f"✅ Undo performed: new undo_count={self.bookmark_engine.undo_count}")
             return {'message': 'Undo action performed'}
         else:
@@ -881,7 +905,7 @@ class TornadoListener:
             }
     
     def send_state_update(self):
-        """Send state update to NLP via Firebase using JSON-RPC format"""
+        """Send state update to NLP via database using JSON-RPC format"""
         try:
             # Create state update using JSON-RPC protocol
             state_update = TornadoStateProtocol.create_state_update(
@@ -895,11 +919,10 @@ class TornadoListener:
                 available_templates=self.get_available_templates()
             )
             
-            # Send to Firebase tornado_state collection
-            state_ref = self.firebase_config.db.collection('tornado_state').document(self.user_id)
-            state_ref.set(state_update)
-            
-            self.logger.info("📤 State update sent to NLP via Firebase")
+            # Send to database tornado_state table
+            if self.state_manager:
+                self.state_manager.update_state(state_update)
+                self.logger.info("📤 State update sent to NLP via database")
             
         except Exception as e:
             self.logger.error(f"❌ Error sending state update: {e}")
@@ -926,8 +949,8 @@ class TornadoListener:
             self.logger.error("Failed to initialize seismic view")
             return
         
-        if not self.initialize_firebase():
-            self.logger.error("Failed to initialize Firebase")
+        if not self.initialize_database():
+            self.logger.error("Failed to initialize SQLite database")
             return
         
         if not self.initialize_bookmark_engine():
@@ -992,7 +1015,7 @@ def main():
         print("TORNADO LISTENER SERVICE")
         print("="*60)
         print("Starting seismic navigation command processor...")
-        print("This service processes JSON-RPC commands from Firebase queue")
+        print("This service processes JSON-RPC commands from SQLite database queue")
         print("WARNING: This script must never terminate or Tornado will close!")
         print("="*60)
         
@@ -1001,11 +1024,11 @@ def main():
         listener.start_listening()
         
     except Exception as e:
-        print(f"❌ FATAL ERROR in Tornado listener: {e}")
+        print(f"FATAL ERROR in Tornado listener: {e}")
         traceback.print_exc()
         
         # Even on fatal error, try to keep running
-        print("⚠️  Attempting to continue despite error...")
+        print("Attempting to continue despite error...")
         time.sleep(10)
         
         # Try to restart
@@ -1013,7 +1036,7 @@ def main():
             listener = TornadoListener()
             listener.start_listening()
         except:
-            print("❌ Failed to restart - entering infinite sleep to keep Tornado alive")
+            print("Failed to restart - entering infinite sleep to keep Tornado alive")
             while True:
                 time.sleep(60)
 

@@ -105,15 +105,19 @@ class BookmarkHTMLEngineV2:
 
         # store whether we are actively controlling tornado or just the html file
         self.tornado = in_tornado
+        self.vision_subclses = tuple()
 
         if self.tornado:
             try:
                 # Specific imports from vision module - everything should be in vision
+                import base
                 from vision import (
                     BookmarkDisplay, BookmarkLocation, CaptureParameters, 
                     CaptureFileParameters, captureImage, Window
                 )
-                
+
+                self.vision_subclses = BookmarkDisplay, BookmarkLocation, CaptureParameters, CaptureFileParameters, captureImage, Window
+
                 # print("loading seismic")
                 # vision.loadSeismic('a:eamea::trutl07:/seisml_miniproject/original_seismic_w_dipxy')
                 # print("seismic loaded")
@@ -123,15 +127,21 @@ class BookmarkHTMLEngineV2:
                 self.tornado = False
 
         if self.tornado:
+
+            # bkm
+            self.bkm_dis = BookmarkDisplay()
+            self.bkm_loc = BookmarkLocation()
+            self.framing = captureImage(Window.MAIN_VIEW)
+
             # tornado capture
             self.capture_param_obj = CaptureParameters()
 
             # setting saving location for capture
-            file_parameters = CaptureFileParameters()
-            file_parameters.setPrefix('test_capture')
-            file_parameters.setPath(self.captures_dir)
-            file_parameters.setFormat('jpg')
-            self.capture_param_obj.setFileParameters(file_parameters)
+            self.file_parameters = CaptureFileParameters()
+            # self.file_parameters.setPrefix('test_capture')
+            # self.file_parameters.setPath(str(self.captures_dir.resolve()))
+            # self.file_parameters.setFormat('png')
+            # self.capture_param_obj.setFileParameters(self.file_parameters)
 
         # update just to make sure
         logger.info("Calling final update_params() in initialization")
@@ -176,6 +186,7 @@ class BookmarkHTMLEngineV2:
         3. Load TEMP_BKM.html into Tornado (placeholder).
         4. Append a tuple (master_template, curr_params) to self.history (unless initial=True), keeping max 20 entries.
         """
+
         # write to temp_bkm_path
         params_dict = self._params_to_dict()
         bookmark_html = self.master_template.format(**params_dict)
@@ -236,6 +247,8 @@ class BookmarkHTMLEngineV2:
         Load the bookmark into the Tornado app using BookmarkLocation from vision.
         """
 
+        # bookmark_path = self.templates_dir / 'default_bookmark.html'
+
         if not self.tornado:
             print(f"'mock' loaded {self.curr_params} into tornado")
             return
@@ -243,19 +256,49 @@ class BookmarkHTMLEngineV2:
         bookmark_file = str(bookmark_path)
 
         if os.path.exists(bookmark_file):
-            bkm_dis = BookmarkDisplay()
-            bkm_loc = BookmarkLocation()
+
+            # import base
+            # from vision import (
+            #     BookmarkDisplay, BookmarkLocation, CaptureParameters, 
+            #     CaptureFileParameters, captureImage, Window
+            # )
+            
+            BookmarkDisplay, BookmarkLocation, CaptureParameters, CaptureFileParameters, captureImage, Window = self.vision_subclses
+
+            # bkm
+            self.bkm_dis = BookmarkDisplay()
+            self.bkm_loc = BookmarkLocation()
+            self.framing = captureImage(Window.MAIN_VIEW)
+
+            # tornado capture
+            self.capture_param_obj = CaptureParameters()
+
+            # setting saving location for capture
+            self.file_parameters = CaptureFileParameters()
+            
+            # have to initiatlise this everytime?
+
+            self.file_parameters.setPrefix('test_capture')
+            self.file_parameters.setPath(str(self.captures_dir.resolve()))
+            self.file_parameters.setFormat('png')
+            self.capture_param_obj.setFileParameters(self.file_parameters)
+
             # after loading bookmark file, the first bookmark inside is used, by name
-            bkm_dis.load(bookmark_file)
-            bkm_loc.load(bookmark_file)
-            bkm_dis_select = bkm_dis.getBookmarkName(0)
-            bkm_loc_select = bkm_loc.getBookmarkName(0)
+            self.bkm_dis.load(bookmark_file)
+            self.bkm_loc.load(bookmark_file)
+
+            print(bookmark_file + '   number of bookmarks saved is   ' + str(self.bkm_dis.size()))
+            
+            bkm_name = self.bkm_dis.getBookmarkName(self.bkm_dis.size()-1)
+ 
+            self.bkm_dis.selectBookmark([bkm_name])
+            self.bkm_loc.selectBookmark([bkm_name])
 
             # need to add setLocation and BookmarkLocation() as well
-            self.capture_param_obj.setDisplayParameters(bkm_dis_select)
-            self.capture_param_obj.setLocation(bkm_loc_select)
-            
-            captureImage(Window.MAIN_VIEW).capture(self.capture_param_obj)
+            self.capture_param_obj.setDisplayParameters(self.bkm_dis)
+            self.capture_param_obj.setLocations(self.bkm_loc)
+            logger.info('checkpoint before capture, configured params')
+            self.framing.capture(self.capture_param_obj)
         else:
             logger.warning(f"Bookmark file '{bookmark_file}' does not exist. Please create it manually in the GUI.")
         
@@ -420,4 +463,4 @@ class BookmarkHTMLEngineV2:
             return True
         except Exception as e:
             logger.error(f"Failed to create valid bookmark: {e}")
-            return False 
+            return False
