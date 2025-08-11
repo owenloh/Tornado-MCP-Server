@@ -82,6 +82,9 @@ class BookmarkHTMLEngineV2:
         with open(self.temp_bkm_path, 'r', encoding='utf-8') as f:
             template_str = f.read()
         self.master_template = generate_master_template(template_str, PARAM_PLACEHOLDER_MAP)
+        
+        # Apply the loaded template parameters to Tornado and update history
+        self.update_params()
 
     def __init__(self, template_name: str = "default_bookmark.html", in_tornado: bool = True):
         self.bookmarks_dir = FileStructure.BOOKMARKS_DIR
@@ -95,16 +98,10 @@ class BookmarkHTMLEngineV2:
         self.history = []
         self.history_index = -1  # Points to the current state in historys
 
-        # load initial template, also appends template params to self.curr_params
-        self.load_template(template_name)
-        
-        # Store the default params from the loaded template
-        self.default_params = copy.deepcopy(self.curr_params)
-        
-        logger.info(f"Initialization: loaded template, history_length={len(self.history)}, index={self.history_index}")
-
         # store whether we are actively controlling tornado or just the html file
+        # (must be set before load_template since it calls update_params)
         self.tornado = in_tornado
+
         self.vision_subclses = tuple()
 
         if self.tornado:
@@ -145,9 +142,20 @@ class BookmarkHTMLEngineV2:
 
         # update just to make sure
         logger.info("Calling final update_params() in initialization")
-        self.update_params()
-        logger.info(f"Initialization complete: history_length={len(self.history)}, index={self.history_index}, can_undo={self.can_undo}, undo_count={self.undo_count}")
 
+
+
+        # load initial template, also appends template params to self.curr_params
+        self.load_template(template_name)
+        
+        # Store the default params from the loaded template
+        self.default_params = copy.deepcopy(self.curr_params)
+        
+        logger.info(f"Initialization: loaded template, history_length={len(self.history)}, index={self.history_index}")
+
+
+        logger.info(f"Initialization complete: history_length={len(self.history)}, index={self.history_index}, can_undo={self.can_undo}, undo_count={self.undo_count}")
+    
 
     def _parse_temp_bkm_to_params(self) -> BookmarkParameters:
         """Parse TEMP_BKM.html and extract parameters into a BookmarkParameters object."""
@@ -326,6 +334,16 @@ class BookmarkHTMLEngineV2:
 
     def change_colormap(self, colormap_index: int):
         """Change the colormap index in curr_params."""
+        # Import here to avoid circular imports
+        from shared.utils.limits_loader import get_limits
+        
+        # Ensure it's an integer and within valid range
+        limits = get_limits()
+        valid, message = limits.validate_colormap(colormap_index)
+        if not valid:
+            raise ValueError(message)
+        colormap_index = int(colormap_index)
+            
         old_value = self.curr_params.seismic_colormap_index
         self.curr_params.seismic_colormap_index = colormap_index
         logger.info(f"Colormap changed from {old_value} to {colormap_index}")
@@ -395,7 +413,14 @@ class BookmarkHTMLEngineV2:
             new_sy = sy * zoom_factor
         else:
             raise ValueError("Either zoom_factor or both scale_x and scale_y must be provided")
-        self.curr_params.scale = (max(0.01, min(10.0, new_sx)), max(0.01, min(10.0, new_sy)))
+        # Import here to avoid circular imports
+        from shared.utils.limits_loader import get_limits
+        
+        limits = get_limits()
+        min_scale_x, max_scale_x = limits.get_scale_limits("x")
+        min_scale_y, max_scale_y = limits.get_scale_limits("y")
+        
+        self.curr_params.scale = (max(min_scale_x, min(max_scale_x, new_sx)), max(min_scale_y, min(max_scale_y, new_sy)))
         logger.info(f"Scale changed from {old_scale} to {self.curr_params.scale}")
 
     def change_slices_position(self, x: float, y: float, z: float):

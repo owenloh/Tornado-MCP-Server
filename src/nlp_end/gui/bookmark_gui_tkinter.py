@@ -20,16 +20,24 @@ import copy
 from pathlib import Path
 
 # Add src to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from core.bookmark_engine_v2 import BookmarkHTMLEngineV2
+# Setup Windows virtual environment for LLM dependencies
+try:
+    from shared.utils.venv_setup import ensure_windows_venv
+    ensure_windows_venv()
+except ImportError as e:
+    print(f"Warning: Failed to setup Windows virtual environment: {e}")
+    # Continue anyway for development/testing
+
+from tornado_end.core.bookmark_engine_v2 import BookmarkHTMLEngineV2
 
 
 class BookmarkGUITkinter:
     """Clean Tkinter-based GUI for bookmark parameter manipulation"""
     
     def __init__(self):
-        self.engine = BookmarkHTMLEngineV2("default_bookmark.html", in_tornado=False)
+        self.engine = BookmarkHTMLEngineV2("default_bookmark.html", in_tornado=True)
         self.current_params = self.engine.curr_params
         print(f"Loaded template with params: {self.current_params}")
         

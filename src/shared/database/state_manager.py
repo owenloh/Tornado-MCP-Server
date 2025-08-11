@@ -309,6 +309,7 @@ class EnhancedCommandQueueManager:
         params['user_id'] = self.user_id
         params['feedback'] = feedback
         
+        print(f"📝 Inserting command into database: {command_id} - {method}")
         success = self.db.insert_command(command_id, self.user_id, method, params)
         
         return command_id

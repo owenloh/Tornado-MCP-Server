@@ -21,8 +21,8 @@ class ConfigLoader:
             config_path: Path to config file. If None, looks for config.json at project root
         """
         if config_path is None:
-            # Get project root (3 levels up from src/utils/config_loader.py)
-            project_root = Path(__file__).parent.parent.parent
+            # Get project root (4 levels up from src/shared/utils/config_loader.py)
+            project_root = Path(__file__).parent.parent.parent.parent
             self.config_path = project_root / "config.json"
         else:
             self.config_path = Path(config_path)
@@ -95,6 +95,18 @@ class ConfigLoader:
     def get_default_template(self) -> str:
         """Get default template name"""
         return self.get('seismic.default_template', 'default_bookmark.html')
+    
+    def get_horizon_path(self) -> str:
+        """Get horizon data path"""
+        return self.get('horizon.data_path', '/files/3dnvg24vmb/horizons/01072025_eda_hrz_t_binary_TWT_ph1_repick_v3_100x100m_z_M20702_binary.hrz')
+    
+    def get_attr_path(self) -> str:
+        """Get attribute data path"""
+        return self.get('attribute.data_path', '/research/oloh/seisml_miniproject/Qfactor_time_domain.fdm.gp')
+    
+    def get_coordinate_mapping(self) -> Dict[str, Any]:
+        """Get coordinate mapping configuration"""
+        return self.get('coordinate_mapping', {})
     
 
 # Global config instance

@@ -20,9 +20,18 @@ from typing import Dict, Any, Optional
 import threading
 
 # Add src to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from firebase.firebase_config import FirebaseConfig, CommandQueueManager
+# Setup Windows virtual environment for LLM dependencies
+try:
+    from shared.utils.venv_setup import ensure_windows_venv
+    ensure_windows_venv()
+except ImportError as e:
+    print(f"Warning: Failed to setup Windows virtual environment: {e}")
+    # Continue anyway for development/testing
+
+from shared.database.database_config import DatabaseConfig
+from shared.database.command_queue_manager import CommandQueueManager
 
 
 class JSONRPCTerminal:

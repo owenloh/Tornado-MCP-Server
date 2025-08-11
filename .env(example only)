@@ -1,0 +1,23 @@
+# Environment Variables for Tornado MCP Project
+# Add your API keys and configuration here
+
+# LLM Provider Configuration
+# Default LLM provider to use (http_llm or gemini)
+DEFAULT_LLM_PROVIDER=http_llm
+
+# Fallback providers (comma-separated)
+FALLBACK_LLM_PROVIDERS=gemini
+
+# HTTP LLM Configuration (Primary)
+HTTP_LLM_SERVER_URL=http://abcd.com/api/llama-3-3-70b/v1/chat/completions
+HTTP_LLM_MODEL=meta-llama/Meta-Llama-3.3-70B-Instruct
+HTTP_LLM_TEMPERATURE=0.4
+HTTP_LLM_MAX_TOKENS=120000
+HTTP_LLM_TIMEOUT=30
+HTTP_LLM_MAX_RETRIES=3
+
+# Gemini Configuration (Fallback)
+GEMINI_API_KEY=your-api-key
+GEMINI_MODEL=gemini-1.5-flash
+GEMINI_TIMEOUT=30
+GEMINI_MAX_RETRIES=1

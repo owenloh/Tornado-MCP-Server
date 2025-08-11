@@ -21,13 +21,18 @@ import threading
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-# Add src to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
+# Add Windows venv to path FIRST
+win_venv_path = Path(__file__).resolve().parent.parent.parent.parent / '.win-venv' / 'Lib' / 'site-packages'
+if win_venv_path.exists():
+    sys.path.insert(0, str(win_venv_path))
 
-from nlp.gemini_command_parser import GeminiCommandParser
-from database.database_config import DatabaseConfig
-from database.command_queue_manager import CommandQueueManager
-from utils.env_config import EnvConfig
+# Add src to path for imports
+sys.path.append(str(Path(__file__).parent.parent.parent.parent))
+
+from nlp_end.nlp.gemini_command_parser import GeminiCommandParser
+from shared.database.database_config import DatabaseConfig
+from shared.database.command_queue_manager import CommandQueueManager
+from shared.utils.env_config import EnvConfig
 
 
 class NLPChatTerminal:
@@ -63,10 +68,10 @@ class NLPChatTerminal:
                 self.connected = True
                 print("Database connected - ready to send commands to Tornado")
             
-            # Initialize Gemini parser with database config
-            print("Loading Gemini AI model...")
+            # Initialize LLM parser with database config and fallback support
+            print("Loading AI models with fallback support...")
             self.parser = GeminiCommandParser(self.gemini_api_key, self.database_config)
-            print("Gemini AI model loaded with real-time state sync")
+            print("AI models loaded with HTTP LLM → Gemini fallback and real-time state sync")
             
             # Set up command queue manager
             if self.connected:
@@ -91,7 +96,7 @@ class NLPChatTerminal:
         print("I understand natural language commands and can help you navigate seismic data.")
         print()
         print("Database Status:", "Connected" if self.connected else "Disconnected")
-        print("AI Model: Gemini Pro (Google)")
+        print("AI Models: HTTP LLM (Primary) → Gemini (Fallback)")
         print("HTML Monitor:", "Active" if self.html_monitor else "Inactive")
         print()
         print("EXAMPLE COMMANDS:")
@@ -139,6 +144,11 @@ class NLPChatTerminal:
             return False
         
         try:
+            # Check if command already has a command_id (from enhanced queue)
+            if "command_id" in command:
+                print(f"Command already queued (ID: {command['command_id'][:8]}...)")
+                return True
+            
             command_data = {
                 "method": command["method"],
                 "params": command["params"]

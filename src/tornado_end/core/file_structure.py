@@ -11,7 +11,7 @@ from pathlib import Path
 
 class FileStructure:
     """Centralized file structure configuration"""
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
     # __file__ is str path of file_structure.py
     
     # Main directories

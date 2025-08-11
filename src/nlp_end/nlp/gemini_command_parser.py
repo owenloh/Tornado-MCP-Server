@@ -19,16 +19,24 @@ from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass
 from pathlib import Path
 import sys
+import logging
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent / '.win-venv' / 'Lib' / 'site-packages') )
-import google.generativeai as genai
+# Add Windows venv to path FIRST
+win_venv_path = Path(__file__).resolve().parent.parent.parent.parent / '.win-venv' / 'Lib' / 'site-packages'
+if win_venv_path.exists():
+    sys.path.insert(0, str(win_venv_path))
 
 # Add src to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from database.database_config import DatabaseConfig
-from database.command_queue_manager import CommandQueueManager
-from database.state_manager import TornadoStateManager, EnhancedCommandQueueManager
+from shared.database.database_config import DatabaseConfig
+from shared.database.command_queue_manager import CommandQueueManager
+from shared.database.state_manager import TornadoStateManager, EnhancedCommandQueueManager
+from shared.utils.limits_loader import get_limits
+from shared.utils.context_loader import get_domain_context
+from shared.llm.llm_provider import LLMFactory, LLMResponse
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -54,6 +62,7 @@ class SeismicContext:
     attribute_visible: bool = False
     horizon_visible: bool = False
     well_visible: bool = True
+    profile_visible: bool = False
     x_visible: bool = True
     y_visible: bool = True
     z_visible: bool = False
@@ -75,17 +84,22 @@ class SeismicContext:
 
 
 class GeminiCommandParser:
-    """Gemini-based natural language to JSON-RPC command parser with real-time state"""
+    """LLM-based natural language to JSON-RPC command parser with HTTP LLM and Gemini fallback"""
     
-    def __init__(self, api_key: str, database_config: DatabaseConfig = None):
-        """Initialize Gemini parser with API key and optional database state manager"""
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+    def __init__(self, api_key: str = None, database_config: DatabaseConfig = None):
+        """Initialize LLM parser with fallback support and optional database state manager"""
+        # Initialize LLM factory with fallback support
+        self.llm_factory = LLMFactory()
+        self.current_provider = None
+        
+        # Store API key for backward compatibility (used by Gemini fallback)
+        self.api_key = api_key
+        
         self.context = SeismicContext()
         self.conversation_history = []
         self.pending_clarification = None
         self.clarification_count = 0
-        self.max_clarifications = 2
+        self.max_clarifications = get_limits().get_system_limit("max_clarifications")
         
         # Initialize state manager if database is available
         self.state_manager = None
@@ -97,8 +111,97 @@ class GeminiCommandParser:
             self.state_manager.start_state_monitoring()
             print("On-demand state requests enabled")
         
-        # Define seismic navigation functions for Gemini
+        # Define seismic navigation functions for LLM
         self.functions = self._define_seismic_functions()
+        
+        # Log provider status
+        self._log_provider_status()
+    
+    def _log_provider_status(self):
+        """Log the status of all LLM providers"""
+        try:
+            status = self.llm_factory.get_provider_status()
+            logger.info("LLM Provider Status:")
+            for provider_name, is_available in status.items():
+                status_icon = "✅" if is_available else "❌"
+                logger.info(f"  {status_icon} {provider_name}: {'Available' if is_available else 'Unavailable'}")
+            
+            # Get current provider
+            self.current_provider = self.llm_factory.get_available_provider()
+            if self.current_provider:
+                logger.info(f"🎯 Active provider: {self.current_provider.name}")
+            else:
+                logger.error("⚠️ No LLM providers available!")
+        except Exception as e:
+            logger.warning(f"Error checking provider status: {e}")
+    
+    def _get_seismic_crossline(self) -> float:
+        """Get current crossline from Cartesian X coordinate"""
+        try:
+            from shared.utils.coordinate_mapper import get_coordinate_mapper
+            mapper = get_coordinate_mapper()
+            crossline, _, _ = mapper.cartesian_to_seismic(x=self.context.x_position)
+            return crossline if crossline is not None else self.context.x_position
+        except:
+            return self.context.x_position
+    
+    def _get_seismic_inline(self) -> float:
+        """Get current inline from Cartesian Y coordinate"""
+        try:
+            from shared.utils.coordinate_mapper import get_coordinate_mapper
+            mapper = get_coordinate_mapper()
+            _, inline, _ = mapper.cartesian_to_seismic(y=self.context.y_position)
+            return inline if inline is not None else self.context.y_position
+        except:
+            return self.context.y_position
+    
+    def _get_seismic_depth(self) -> float:
+        """Get current depth from Cartesian Z coordinate"""
+        try:
+            from shared.utils.coordinate_mapper import get_coordinate_mapper
+            mapper = get_coordinate_mapper()
+            _, _, depth = mapper.cartesian_to_seismic(z=self.context.z_position)
+            return depth if depth is not None else self.context.z_position
+        except:
+            return self.context.z_position
+    
+    def _invoke_llm_with_fallback(self, system_prompt: str, user_prompt: str, **kwargs) -> LLMResponse:
+        """
+        Invoke LLM with automatic fallback support.
+        
+        This method handles the HTTP LLM → Gemini fallback logic transparently.
+        """
+        try:
+            # Get available provider (with fallback logic)
+            provider = self.llm_factory.get_available_provider()
+            
+            if not provider:
+                return LLMResponse(
+                    content="",
+                    success=False,
+                    error_message="No LLM providers available",
+                    provider_name="None"
+                )
+            
+            # Invoke the provider
+            response = provider.invoke_prompt(system_prompt, user_prompt, **kwargs)
+            
+            # Log provider usage
+            if response.success:
+                logger.debug(f"LLM success with {response.provider_name}")
+            else:
+                logger.warning(f"LLM failed with {response.provider_name}: {response.error_message}")
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"LLM invocation error: {e}")
+            return LLMResponse(
+                content="",
+                success=False,
+                error_message=f"LLM invocation failed: {str(e)}",
+                provider_name="Error"
+            )
     
     def _update_context_from_state(self, new_state: Dict[str, Any]):
         """Update context from fresh state data"""
@@ -147,6 +250,7 @@ class GeminiCommandParser:
                 self.context.attribute_visible = curr_params.get('attribute_visible', self.context.attribute_visible)
                 self.context.horizon_visible = curr_params.get('horizon_visible', self.context.horizon_visible)
                 self.context.well_visible = curr_params.get('well_visible', self.context.well_visible)
+                self.context.profile_visible = curr_params.get('profile_visible', self.context.profile_visible)
                 self.context.x_visible = curr_params.get('x_visible', getattr(self.context, 'x_visible', True))
                 self.context.y_visible = curr_params.get('y_visible', getattr(self.context, 'y_visible', True))
                 self.context.z_visible = curr_params.get('z_visible', getattr(self.context, 'z_visible', False))
@@ -219,6 +323,7 @@ class GeminiCommandParser:
                 self.context.attribute_visible = curr_params.get('attribute_visible', self.context.attribute_visible)
                 self.context.horizon_visible = curr_params.get('horizon_visible', self.context.horizon_visible)
                 self.context.well_visible = curr_params.get('well_visible', self.context.well_visible)
+                self.context.profile_visible = curr_params.get('profile_visible', self.context.profile_visible)
                 self.context.x_visible = curr_params.get('x_visible', getattr(self.context, 'x_visible', True))
                 self.context.y_visible = curr_params.get('y_visible', getattr(self.context, 'y_visible', True))
                 self.context.z_visible = curr_params.get('z_visible', getattr(self.context, 'z_visible', False))
@@ -251,27 +356,26 @@ class GeminiCommandParser:
         return [
             # Position and Navigation Functions
             {
-                "name": "update_position",
-                "description": "Update crossline (X), inline (Y), and depth (Z) position in seismic view",
+                "name": "move_to_seismic_position",
+                "description": "Move to specific seismic coordinates (crossline, inline, depth)",
                 "parameters": {
                     "type": "OBJECT",
                     "properties": {
-                        "x": {"type": "NUMBER", "description": "Crossline position (100000-200000)"},
-                        "y": {"type": "NUMBER", "description": "Inline position (100000-150000)"},
-                        "z": {"type": "NUMBER", "description": "Depth position (1000-6000)"}
-                    },
-                    "required": ["x", "y", "z"]
+                        "crossline": {"type": "NUMBER", "description": "Crossline number (e.g., 25519-25599)"},
+                        "inline": {"type": "NUMBER", "description": "Inline number (e.g., 3000-8931)"},
+                        "depth": {"type": "NUMBER", "description": "Depth in meters (e.g., 0-3500)"}
+                    }
                 }
             },
             {
                 "name": "update_orientation",
-                "description": "Update view rotation angles in radians",
+                "description": "Update view rotation angles in radians (any value accepted, automatically normalized to -π to π)",
                 "parameters": {
                     "type": "OBJECT",
                     "properties": {
-                        "rot1": {"type": "NUMBER", "description": "First rotation angle (-π to π)"},
-                        "rot2": {"type": "NUMBER", "description": "Second rotation angle (-π to π)"},
-                        "rot3": {"type": "NUMBER", "description": "Z-axis rotation angle (-π to π)"}
+                        "rot1": {"type": "NUMBER", "description": "First rotation angle in radians (any value, auto-normalized)"},
+                        "rot2": {"type": "NUMBER", "description": "Second rotation angle in radians (any value, auto-normalized)"},
+                        "rot3": {"type": "NUMBER", "description": "Z-axis rotation angle in radians (any value, auto-normalized)"}
                     },
                     "required": ["rot1", "rot2", "rot3"]
                 }
@@ -343,14 +447,15 @@ class GeminiCommandParser:
             # Visibility Functions
             {
                 "name": "update_visibility",
-                "description": "Toggle data type visibility (seismic, attributes, horizons, wells)",
+                "description": "Toggle data type visibility (seismic, attributes, horizons, wells, profiles)",
                 "parameters": {
                     "type": "OBJECT",
                     "properties": {
                         "seismic": {"type": "BOOLEAN", "description": "Show/hide seismic data"},
                         "attribute": {"type": "BOOLEAN", "description": "Show/hide attribute data"},
                         "horizon": {"type": "BOOLEAN", "description": "Show/hide horizon data"},
-                        "well": {"type": "BOOLEAN", "description": "Show/hide well data"}
+                        "well": {"type": "BOOLEAN", "description": "Show/hide well data"},
+                        "profile": {"type": "BOOLEAN", "description": "Show/hide profile data"}
                     }
                 }
             },
@@ -381,11 +486,11 @@ class GeminiCommandParser:
             },
             {
                 "name": "update_colormap",
-                "description": "Change colormap/color scheme",
+                "description": "Change colormap/color scheme (integer index only)",
                 "parameters": {
                     "type": "OBJECT",
                     "properties": {
-                        "colormap_index": {"type": "INTEGER", "description": "Colormap index (0-15)"}
+                        "colormap_index": {"type": "INTEGER", "description": "Integer colormap index (0-15, no decimals)"}
                     },
                     "required": ["colormap_index"]
                 }
@@ -420,22 +525,22 @@ class GeminiCommandParser:
             },
             {
                 "name": "rotate_left",
-                "description": "Rotate view to the left",
+                "description": "Rotate view to the left by π/8 radians (22.5 degrees)",
                 "parameters": {"type": "OBJECT", "properties": {}}
             },
             {
                 "name": "rotate_right",
-                "description": "Rotate view to the right", 
+                "description": "Rotate view to the right by π/8 radians (22.5 degrees)", 
                 "parameters": {"type": "OBJECT", "properties": {}}
             },
             {
                 "name": "increase_gain",
-                "description": "Increase seismic gain/amplitude",
+                "description": "Increase seismic gain/amplitude by 4dB",
                 "parameters": {"type": "OBJECT", "properties": {}}
             },
             {
                 "name": "decrease_gain",
-                "description": "Decrease seismic gain/amplitude",
+                "description": "Decrease seismic gain/amplitude by 4dB",
                 "parameters": {"type": "OBJECT", "properties": {}}
             },
             
@@ -451,11 +556,16 @@ class GeminiCommandParser:
                 "description": "Reload the bookmark template",
                 "parameters": {"type": "OBJECT", "properties": {}}
             },
+            {
+                "name": "reload_limits",
+                "description": "Reload transformation limits from configuration file",
+                "parameters": {"type": "OBJECT", "properties": {}}
+            },
             
             # Multi-Function and Correction Commands
             {
                 "name": "execute_sequence",
-                "description": "Execute multiple commands in sequence (e.g., undo then move, zoom then adjust gain)",
+                "description": "Execute multiple commands in sequence - ONLY use when user explicitly requests multiple actions (e.g., 'zoom then adjust gain', 'move then rotate')",
                 "parameters": {
                     "type": "OBJECT",
                     "properties": {
@@ -508,11 +618,14 @@ class GeminiCommandParser:
             },
             {
                 "name": "load_template",
-                "description": "Load a specific bookmark template",
+                "description": "Load a specific bookmark template based on user's viewing preference",
                 "parameters": {
                     "type": "OBJECT",
                     "properties": {
-                        "template_name": {"type": "STRING", "description": "Name of template to load"}
+                        "template_name": {
+                            "type": "STRING", 
+                            "description": "Template name or natural description. Available templates: 'default_bookmark' (standard view), 'top_view' (view from above/top), 'crossline_view' (crossline perspective), 'inline_view' (inline perspective), 'ortho_view' (orthogonal view). You can also use natural language like 'top', 'above', 'crossline', 'inline', 'orthogonal', etc."
+                        }
                     },
                     "required": ["template_name"]
                 }
@@ -547,6 +660,14 @@ class GeminiCommandParser:
                     },
                     "required": ["new_method", "new_params"]
                 }
+            },
+            {
+                "name": "reload_context",
+                "description": "Reload domain context from context.json file",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {}
+                }
             }
         ]
     
@@ -559,13 +680,22 @@ class GeminiCommandParser:
         if self.state_manager:
             real_time_state = self.state_manager.format_current_state_for_llm()
         
+        domain_context = get_domain_context()
+        
+        domain_section = ""
+        if domain_context:
+            domain_section = f"""
+
+DOMAIN KNOWLEDGE:
+{domain_context}"""
+        
         base_state = f"""
 CURRENT STATE:
-- Position: X={self.context.x_position:.0f} (crossline), Y={self.context.y_position:.0f} (inline), Z={self.context.z_position:.0f} (depth)
+- Position: Crossline={int(self._get_seismic_crossline())}, Inline={int(self._get_seismic_inline())}, Depth={int(self._get_seismic_depth())}
 - Scale: {self.context.scale_x:.2f}x zoom
 - Rotation: {self.context.rotation:.2f} radians
-- Visible: Seismic={self.context.seismic_visible}, Attributes={self.context.attribute_visible}, Horizons={self.context.horizon_visible}, Wells={self.context.well_visible}
-- Last command: {self.context.last_command or 'None'}"""
+- Visible: Seismic={self.context.seismic_visible}, Attributes={self.context.attribute_visible}, Horizons={self.context.horizon_visible}, Wells={self.context.well_visible}, Profiles={self.context.profile_visible}
+- Last command: {self.context.last_command or 'None'}{domain_section}"""
 
         return f"""
 You are an expert seismic navigation assistant for Tornado software. You help geophysicists navigate and analyze seismic data through natural language commands.
@@ -586,18 +716,22 @@ COMMAND INTERPRETATION GUIDELINES:
 8. "shift view" = update_shift, "move slice" = update_position
 9. "bottom right" = positive X and Y shift, "top left" = negative X and Y shift
 10. If user says "no, I want X instead", call undo_last_action THEN the new command
+11. TEMPLATE REQUESTS: "from the top"→top_view, "crossline view"→crossline_view, "inline"→inline_view, "orthogonal"→ortho_view
+12. ROTATION: All rotations are in RADIANS. Any value accepted (auto-normalized). "rotate a bit"→π/8 rad, "rotate left/right"→π/8 rad, "rotate 720°"→4π rad, etc.
 
 SAFETY GUARDRAILS:
-- Position ranges: X(100000-200000), Y(100000-150000), Z(1000-6000)
-- Scale ranges: 0.1-3.0
-- Rotation ranges: -π to π
-- Gain ranges: 0.1-5.0
+{get_limits().get_limits_summary()}
+- Rotation: ANY radian value accepted (auto-normalized to -π to π range). All rotations are in RADIANS, not degrees
 - Only ask for clarification if truly critical - better to act and let user undo
 
-MULTI-FUNCTION CALLS:
-- You can call multiple functions in sequence
-- Example: If user says "no, move crossline instead", call undo_last_action then update_position
-- Example: If user says "undo and zoom in", call undo_last_action then zoom_in
+SINGLE vs MULTI-FUNCTION CALLS:
+- For single actions like "undo", "redo", "zoom in" - use ONE function call
+- For multiple actions like "zoom in and increase gain", "move left and rotate" - use MULTIPLE function calls (2-3 max)
+- Example: "undo" → call undo_last_action (single function)
+- Example: "zoom in and increase gain" → call zoom_in AND increase_gain (two separate function calls)
+- Example: "move left, zoom in, and increase gain" → call update_position AND zoom_in AND increase_gain (three function calls)
+- KEEP IT MINIMAL: Use 2-3 function calls maximum, avoid over-complicating simple requests
+- DON'T use multiple calls for: clarifications, info requests, single template loads, single movements
 
 USER INPUT: "{user_input}"
 
@@ -606,7 +740,7 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
     
     def parse_command(self, user_input: str) -> Dict[str, Any]:
         """
-        Parse natural language command into JSON-RPC format
+        Parse natural language command into JSON-RPC format with LLM fallback support
         
         Args:
             user_input: Natural language command from user
@@ -615,11 +749,54 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
             dict: Parsed command result with method, params, or clarification
         """
         try:
+            # Get current provider
+            provider = self.llm_factory.get_available_provider()
+            if not provider:
+                return {
+                    "type": "error",
+                    "message": "No LLM providers available",
+                    "suggestion": "Please check your network connection and API configuration."
+                }
+            
+            # Use different approaches based on provider type
+            if provider.name == "GeminiProvider":
+                # Use Gemini's native function calling
+                return self._parse_with_gemini_functions(user_input)
+            else:
+                # Use JSON-based function calling for HTTP LLM
+                return self._parse_with_json_functions(user_input)
+                
+        except Exception as e:
+            logger.error(f"Error in parse_command: {e}")
+            return {
+                "type": "error",
+                "message": f"Error parsing command: {str(e)}",
+                "suggestion": "Please try rephrasing your command or type 'help' for available commands."
+            }
+    
+    def _parse_with_gemini_functions(self, user_input: str) -> Dict[str, Any]:
+        """Parse using Gemini's native function calling (fallback method)"""
+        try:
+            # Import Gemini here for fallback use only (venv path already setup)
+            import google.generativeai as genai
+            
+            # Configure Gemini with API key
+            if self.api_key:
+                genai.configure(api_key=self.api_key)
+                model = genai.GenerativeModel('gemini-1.5-flash')
+            else:
+                # Try to get API key from environment
+                api_key = os.getenv('GEMINI_API_KEY')
+                if not api_key:
+                    raise Exception("Gemini API key not available")
+                genai.configure(api_key=api_key)
+                model = genai.GenerativeModel('gemini-1.5-flash')
+            
             # Create context-aware prompt
             prompt = self._create_context_prompt(user_input)
             
             # Generate response with function calling
-            response = self.model.generate_content(
+            response = model.generate_content(
                 prompt,
                 tools=self.functions,
                 tool_config={'function_calling_config': {'mode': 'ANY'}}
@@ -635,39 +812,88 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
             return result
             
         except Exception as e:
+            logger.error(f"Gemini function calling failed: {e}")
+            # Fallback to JSON-based parsing
+            return self._parse_with_json_functions(user_input)
+    
+    def _parse_with_json_functions(self, user_input: str) -> Dict[str, Any]:
+        """Parse using JSON-based function calling for HTTP LLM"""
+        try:
+            # Create system prompt with function definitions
+            system_prompt = self._create_json_system_prompt()
+            
+            # Create user prompt with context
+            user_prompt = self._create_json_user_prompt(user_input)
+            
+            # Invoke LLM with fallback
+            response = self._invoke_llm_with_fallback(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=0.4,
+                max_tokens=4000
+            )
+            
+            if not response.success:
+                return {
+                    "type": "error",
+                    "message": f"LLM request failed: {response.error_message}",
+                    "suggestion": "Please try again or check your connection."
+                }
+            
+            # Parse JSON response
+            result = self._process_json_response(response.content, user_input)
+            
+            # Reset clarification count on successful command
+            if result.get("type") in ["command", "multi_command"]:
+                self.clarification_count = 0
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"JSON function calling failed: {e}")
             return {
                 "type": "error",
-                "message": f"Error parsing command: {str(e)}",
-                "suggestion": "Please try rephrasing your command or type 'help' for available commands."
+                "message": f"Error processing command: {str(e)}",
+                "suggestion": "Please try rephrasing your command."
             }
     
     def _process_gemini_response(self, response, user_input: str) -> Dict[str, Any]:
-        """Process Gemini response and extract function call"""
+        """Process Gemini response and extract function calls (supports multiple calls)"""
         try:
-            # Check if response has function call
+            # Check if response has function calls
             if (response.candidates and 
                 response.candidates[0].content and 
                 response.candidates[0].content.parts):
                 
+                function_calls = []
+                
+                # Collect all function calls from the response
                 for part in response.candidates[0].content.parts:
                     if hasattr(part, 'function_call') and part.function_call:
-                        func_call = part.function_call
-                        
-                        # Handle different function types
-                        if func_call.name == "ask_clarification":
-                            return self._handle_clarification(func_call.args, user_input)
-                        elif func_call.name in ["show_current_state", "show_help", "list_templates", "check_undo_redo_status"]:
-                            return self._handle_info_request(func_call.name)
-                        elif func_call.name in ["load_template", "undo_last_action", "redo_last_action"]:
-                            return self._handle_special_command(func_call.name, func_call.args)
-                        elif func_call.name == "execute_sequence":
-                            return self._handle_command_sequence(func_call.args)
-                        elif func_call.name in ["undo_and_execute", "execute_sequence"]:
-                            return self._handle_multi_action(func_call.name, func_call.args)
-                        elif func_call.name.startswith("move_") and func_call.name.endswith("_relative"):
-                            return self._handle_relative_movement(func_call.name, func_call.args)
-                        else:
-                            return self._handle_direct_command(func_call.name, func_call.args, user_input)
+                        function_calls.append(part.function_call)
+                
+                if not function_calls:
+                    return {
+                        "type": "error", 
+                        "message": "Could not understand the command",
+                        "suggestion": "Please try rephrasing or type 'help' for available commands."
+                    }
+                
+                # Debug: Print all function calls
+                if len(function_calls) > 1:
+                    print(f"🤖 AI called {len(function_calls)} functions:")
+                    for i, func_call in enumerate(function_calls, 1):
+                        print(f"   {i}. {func_call.name} with args: {func_call.args}")
+                else:
+                    print(f"🤖 AI called function: {function_calls[0].name} with args: {function_calls[0].args}")
+                
+                # Handle single function call (existing behavior)
+                if len(function_calls) == 1:
+                    return self._handle_single_function_call(function_calls[0], user_input)
+                
+                # Handle multiple function calls
+                else:
+                    return self._handle_multiple_function_calls(function_calls, user_input)
             
             # If no function call, return error
             return {
@@ -682,6 +908,81 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
                 "message": f"Error processing response: {str(e)}",
                 "suggestion": "Please try again or type 'help' for assistance."
             }
+    
+    def _handle_single_function_call(self, func_call, user_input: str) -> Dict[str, Any]:
+        """Handle a single function call (existing logic)"""
+        # Handle different function types
+        if func_call.name == "ask_clarification":
+            return self._handle_clarification(func_call.args, user_input)
+        elif func_call.name in ["show_current_state", "show_help", "list_templates", "check_undo_redo_status", "reload_limits"]:
+            return self._handle_info_request(func_call.name)
+        elif func_call.name in ["load_template", "undo_last_action", "redo_last_action"]:
+            return self._handle_special_command(func_call.name, func_call.args)
+        elif func_call.name == "execute_sequence":
+            return self._handle_command_sequence(func_call.args)
+        elif func_call.name == "undo_and_execute":
+            return self._handle_multi_action(func_call.name, func_call.args)
+        elif func_call.name.startswith("move_") and func_call.name.endswith("_relative"):
+            return self._handle_relative_movement(func_call.name, func_call.args)
+        else:
+            return self._handle_direct_command(func_call.name, func_call.args, user_input)
+    
+    def _handle_multiple_function_calls(self, function_calls, user_input: str) -> Dict[str, Any]:
+        """Handle multiple function calls in sequence"""
+        commands = []
+        feedback_parts = []
+        
+        # Process each function call
+        for func_call in function_calls:
+            # Skip clarification and info requests in multi-call scenarios
+            if func_call.name in ["ask_clarification", "show_current_state", "show_help", "list_templates", "check_undo_redo_status", "reload_limits"]:
+                continue
+            
+            # Convert function call to command format
+            if func_call.name in ["load_template", "undo_last_action", "redo_last_action"]:
+                # Handle special commands
+                result = self._handle_special_command(func_call.name, func_call.args)
+                if result.get("type") == "command":
+                    commands.append({
+                        "method": result["method"],
+                        "params": result["params"]
+                    })
+                    feedback_parts.append(result.get("feedback", f"Executing {func_call.name}"))
+            
+            elif func_call.name.startswith("move_") and func_call.name.endswith("_relative"):
+                # Handle relative movement
+                result = self._handle_relative_movement(func_call.name, func_call.args)
+                if result.get("type") == "command":
+                    commands.append({
+                        "method": result["method"],
+                        "params": result["params"]
+                    })
+                    feedback_parts.append(result.get("feedback", f"Executing {func_call.name}"))
+            
+            else:
+                # Handle direct commands
+                result = self._handle_direct_command(func_call.name, func_call.args, user_input)
+                if result.get("type") == "command":
+                    commands.append({
+                        "method": result["method"],
+                        "params": result["params"]
+                    })
+                    feedback_parts.append(result.get("feedback", f"Executing {func_call.name}"))
+        
+        if not commands:
+            return {
+                "type": "error",
+                "message": "No valid commands found in the request",
+                "suggestion": "Please try rephrasing your command."
+            }
+        
+        # Return as multi-command sequence
+        return {
+            "type": "multi_command",
+            "commands": commands,
+            "feedback": f"Executing {len(commands)} commands: " + " → ".join(feedback_parts),
+            "description": f"Multi-command sequence from: {user_input}"
+        }
     
     def _handle_clarification(self, args: Dict, original_input: str) -> Dict[str, Any]:
         """Handle clarification requests from Gemini"""
@@ -771,9 +1072,9 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
 ╚══════════════════════════════════════════════════════════════╝
 
 📍 POSITION:
-  • Crossline (X): {self.context.x_position:.1f}
-  • Inline (Y): {self.context.y_position:.1f}  
-  • Depth (Z): {self.context.z_position:.1f}
+  • Crossline: {int(self._get_seismic_crossline())}
+  • Inline: {int(self._get_seismic_inline())}  
+  • Depth: {int(self._get_seismic_depth())}
 
 🔧 VIEW CONFIGURATION:
   • Scale: {self.context.scale_x:.3f} x {self.context.scale_y:.3f}
@@ -791,6 +1092,7 @@ Be decisive and helpful. Make reasonable assumptions. Users can always undo if w
   • Attributes: {'✓' if self.context.attribute_visible else '✗'}
   • Horizons: {'✓' if self.context.horizon_visible else '✗'}
   • Wells: {'✓' if self.context.well_visible else '✗'}
+  • Profiles: {'✓' if self.context.profile_visible else '✗'}
 
 📐 SLICE VISIBILITY:
   • X-Slice (Crossline): {'✓' if self.context.x_visible else '✗'}
@@ -820,7 +1122,7 @@ POSITION & NAVIGATION:
 
 VIEW CONTROLS:
   • "zoom in" / "zoom out" / "reset zoom"
-  • "rotate left" / "rotate right"
+  • "rotate left" / "rotate right" (π/8 radians each)
   • "increase gain" / "decrease gain"
 
 VISIBILITY:
@@ -834,17 +1136,20 @@ STATE MANAGEMENT:
   • "show current state"
 
 EXAMPLES:
-  • "Move crossline slice left by 1000 units"
-  • "Zoom in and increase the gain a bit"
-  • "Show me the current position"
-  • "Hide everything except seismic data"
+  • "Move crossline slice left by 1000 units" (single function)
+  • "Zoom in and increase the gain a bit" (two functions: zoom_in + increase_gain)
+  • "Show me the current position" (single function)
+  • "Hide everything except seismic data" (single function)
+  • "Show me from the top" / "I want to see it from above" (single function)
+  • "Move left, zoom in, and rotate right" (three functions: update_position + zoom_in + rotate_right)
 
 Type your command naturally - I'll understand and ask for clarification if needed!
 
 TEMPLATE MANAGEMENT:
-  • "show available templates"
-  • "load template [name]"
-  • "switch to default view"
+  • "show available templates" / "list templates"
+  • "load template [name]" / "switch to [view]"
+  • Natural language: "show me from the top", "view from above", "crossline view", "inline perspective"
+  • Available views: top_view, crossline_view, inline_view, ortho_view, default_bookmark
 
 UNDO/REDO:
   • "undo" / "undo last action"
@@ -920,7 +1225,99 @@ The system tracks your current position and state in real-time for better relati
                 "type": "info",
                 "message": "❌ Cannot check undo/redo status - database not connected"
             }
+        
+        elif function_name == "reload_limits":
+            from shared.utils.limits_loader import reload_limits
+            
+            # Reload limits from file
+            limits = reload_limits()
+            
+            return {
+                "type": "info",
+                "message": f"""🔄 TRANSFORMATION LIMITS RELOADED
+
+{limits.get_limits_summary()}
+
+✅ Limits have been reloaded from configuration file."""
+            }
+        
+        elif function_name == "reload_context":
+            from shared.utils.context_loader import reload_context_loader, get_domain_context
+            
+            # Reload context from file
+            reload_context_loader()
+            context = get_domain_context()
+            
+            return {
+                "type": "info",
+                "message": f"""🔄 DOMAIN CONTEXT RELOADED
+
+Context length: {len(context)} characters
+Preview: {context[:200] + '...' if len(context) > 200 else context}
+
+✅ Domain context has been reloaded from context.json file."""
+            }
     
+    def _map_template_name(self, user_input: str) -> str:
+        """Map natural language template requests to actual template names"""
+        user_input_lower = user_input.lower().strip()
+        
+        # Template mapping dictionary
+        template_mappings = {
+            # Top view mappings
+            "top": "top_view",
+            "top_view": "top_view", 
+            "from above": "top_view",
+            "above": "top_view",
+            "bird's eye": "top_view",
+            "birds eye": "top_view",
+            "overhead": "top_view",
+            "from the top": "top_view",
+            "looking down": "top_view",
+            
+            # Crossline view mappings
+            "crossline": "crossline_view",
+            "crossline_view": "crossline_view",
+            "cross line": "crossline_view",
+            "x-line": "crossline_view",
+            "xline": "crossline_view",
+            
+            # Inline view mappings
+            "inline": "inline_view",
+            "inline_view": "inline_view", 
+            "in line": "inline_view",
+            "y-line": "inline_view",
+            "yline": "inline_view",
+            
+            # Orthogonal view mappings
+            "ortho": "ortho_view",
+            "ortho_view": "ortho_view",
+            "orthogonal": "ortho_view",
+            "orthogonal_view": "ortho_view",
+            "perpendicular": "ortho_view",
+            "90 degrees": "ortho_view",
+            
+            # Default view mappings
+            "default": "default_bookmark",
+            "default_bookmark": "default_bookmark",
+            "standard": "default_bookmark",
+            "normal": "default_bookmark",
+            "regular": "default_bookmark",
+            "original": "default_bookmark"
+        }
+        
+        # Check for exact matches first
+        if user_input_lower in template_mappings:
+            return template_mappings[user_input_lower]
+        
+        # Check for partial matches (contains keywords)
+        for keyword, template in template_mappings.items():
+            if keyword in user_input_lower:
+                return template
+        
+        # If no mapping found, return the original input (assume it's a direct template name)
+        return user_input
+
     def _handle_special_command(self, function_name: str, args: Dict) -> Dict[str, Any]:
         """Handle special commands like templates and undo/redo"""
         if function_name == "load_template":
@@ -932,26 +1329,30 @@ The system tracks your current position and state in real-time for better relati
                     "suggestion": "Please specify which template to load"
                 }
             
+            # Map natural language to actual template names
+            actual_template = self._map_template_name(template_name)
+            
             # Use enhanced queue if available
             if self.enhanced_queue:
-                command_id = self.enhanced_queue.add_template_command(template_name)
+                command_id = self.enhanced_queue.add_template_command(actual_template)
                 if command_id:
                     return {
                         "type": "command",
                         "method": "load_template",
-                        "params": {"template_name": template_name},
-                        "feedback": f"Loading template '{template_name}'...",
+                        "params": {"template_name": actual_template},
+                        "feedback": f"Loading {actual_template} template ('{template_name}')...",
                         "command_id": command_id
                     }
             
             return {
                 "type": "command",
                 "method": "load_template", 
-                "params": {"template_name": template_name},
-                "feedback": f"Loading template '{template_name}'..."
+                "params": {"template_name": actual_template},
+                "feedback": f"Loading {actual_template} template ('{template_name}')..."
             }
         
         elif function_name == "undo_last_action":
+            print("🔙 Processing single undo command")
             # Get fresh undo state from Tornado
             if self.state_manager and self.state_manager.current_state:
                 print("📊 Checking undo availability from real-time state...")
@@ -967,6 +1368,7 @@ The system tracks your current position and state in real-time for better relati
                     }
                 
                 command_id = self.enhanced_queue.add_undo_command()
+                print(f"🔙 Added undo command to queue with ID: {command_id}")
                 return {
                     "type": "command",
                     "method": "undo",
@@ -975,6 +1377,7 @@ The system tracks your current position and state in real-time for better relati
                     "command_id": command_id
                 }
             
+            print("⚠️ Using fallback undo path (no enhanced queue)")
             return {
                 "type": "command",
                 "method": "undo",
@@ -983,6 +1386,7 @@ The system tracks your current position and state in real-time for better relati
             }
         
         elif function_name == "redo_last_action":
+            print("🔜 Processing single redo command")
             # Get fresh redo state from Tornado
             if self.state_manager and self.state_manager.current_state:
                 print("📊 Checking redo availability from real-time state...")
@@ -998,6 +1402,7 @@ The system tracks your current position and state in real-time for better relati
                     }
                 
                 command_id = self.enhanced_queue.add_redo_command()
+                print(f"🔜 Added redo command to queue with ID: {command_id}")
                 return {
                     "type": "command",
                     "method": "redo",
@@ -1006,6 +1411,7 @@ The system tracks your current position and state in real-time for better relati
                     "command_id": command_id
                 }
             
+            print("⚠️ Using fallback redo path (no enhanced queue)")
             return {
                 "type": "command",
                 "method": "redo",
@@ -1017,6 +1423,11 @@ The system tracks your current position and state in real-time for better relati
         """Handle multiple commands in sequence"""
         commands = args.get("commands", [])
         description = args.get("description", "Executing command sequence")
+        
+        # Debug: Print what sequence is being executed
+        print(f"🔄 Executing command sequence: {len(commands)} commands")
+        for i, cmd in enumerate(commands):
+            print(f"   {i+1}. {cmd.get('method')} with params: {cmd.get('params', {})}")
         
         if not commands:
             return {
@@ -1208,54 +1619,88 @@ The system tracks your current position and state in real-time for better relati
         return command
     
     def _validate_parameters(self, function_name: str, args: Dict) -> Dict[str, Any]:
-        """Validate function parameters against ranges and constraints"""
+        """Validate function parameters against ranges and constraints from config"""
+        limits = get_limits()
+        
         if function_name == "update_position":
             x, y, z = args.get("x"), args.get("y"), args.get("z")
             
-            if x is not None and not (100000 <= x <= 200000):
-                return {"valid": False, "message": f"Crossline position {x} out of range (100000-200000)"}
-            if y is not None and not (100000 <= y <= 150000):
-                return {"valid": False, "message": f"Inline position {y} out of range (100000-150000)"}
-            if z is not None and not (1000 <= z <= 6000):
-                return {"valid": False, "message": f"Depth position {z} out of range (1000-6000)"}
+            if x is not None:
+                valid, message = limits.validate_position("x", x)
+                if not valid:
+                    return {"valid": False, "message": message}
+            
+            if y is not None:
+                valid, message = limits.validate_position("y", y)
+                if not valid:
+                    return {"valid": False, "message": message}
+            
+            if z is not None:
+                valid, message = limits.validate_position("z", z)
+                if not valid:
+                    return {"valid": False, "message": message}
         
         elif function_name == "update_scale":
             scale_x, scale_y = args.get("scale_x"), args.get("scale_y")
-            if scale_x is not None and not (0.1 <= scale_x <= 3.0):
-                return {"valid": False, "message": f"Scale X {scale_x} out of range (0.1-3.0)"}
-            if scale_y is not None and not (0.1 <= scale_y <= 3.0):
-                return {"valid": False, "message": f"Scale Y {scale_y} out of range (0.1-3.0)"}
+            
+            if scale_x is not None:
+                valid, message = limits.validate_scale("x", scale_x)
+                if not valid:
+                    return {"valid": False, "message": message}
+            
+            if scale_y is not None:
+                valid, message = limits.validate_scale("y", scale_y)
+                if not valid:
+                    return {"valid": False, "message": message}
         
         elif function_name == "update_gain":
             gain = args.get("gain_value")
-            if gain is not None and not (0.1 <= gain <= 5.0):
-                return {"valid": False, "message": f"Gain {gain} out of range (0.1-5.0)"}
+            if gain is not None:
+                valid, message = limits.validate_gain(gain)
+                if not valid:
+                    return {"valid": False, "message": message}
         
         elif function_name == "update_colormap":
             colormap = args.get("colormap_index")
-            if colormap is not None and not (0 <= colormap <= 15):
-                return {"valid": False, "message": f"Colormap index {colormap} out of range (0-15)"}
+            if colormap is not None:
+                valid, message = limits.validate_colormap(colormap)
+                if not valid:
+                    return {"valid": False, "message": message}
+                
+                # Update args with integer value if validation passed
+                args["colormap_index"] = int(colormap)
         
         return {"valid": True}
     
     def _generate_feedback(self, function_name: str, args: Dict, user_input: str) -> str:
         """Generate user-friendly feedback for commands"""
-        if function_name == "update_position":
-            x, y, z = args.get("x"), args.get("y"), args.get("z")
-            return f"Moving to position: Crossline={x:.0f}, Inline={y:.0f}, Depth={z:.0f}"
+        if function_name == "move_to_seismic_position":
+            crossline = args.get("crossline")
+            inline = args.get("inline") 
+            depth = args.get("depth")
+            
+            parts = []
+            if crossline is not None:
+                parts.append(f"crossline {int(crossline)}")
+            if inline is not None:
+                parts.append(f"inline {int(inline)}")
+            if depth is not None:
+                parts.append(f"depth {int(depth)}")
+            
+            return f"Moving to {', '.join(parts)}"
         
         elif function_name == "zoom_in":
             return "Zooming in on seismic view"
         elif function_name == "zoom_out":
             return "Zooming out of seismic view"
         elif function_name == "rotate_left":
-            return "Rotating view to the left"
+            return "Rotating view to the left by π/8 radians (22.5°)"
         elif function_name == "rotate_right":
-            return "Rotating view to the right"
+            return "Rotating view to the right by π/8 radians (22.5°)"
         elif function_name == "increase_gain":
-            return "Increasing seismic gain/amplitude"
+            return "Increasing seismic gain/amplitude by 4dB"
         elif function_name == "decrease_gain":
-            return "Decreasing seismic gain/amplitude"
+            return "Decreasing seismic gain/amplitude by 4dB"
         
         elif function_name == "update_visibility":
             visible_items = [k for k, v in args.items() if v == True]
@@ -1306,3 +1751,176 @@ The system tracks your current position and state in real-time for better relati
             self.conversation_history = self.conversation_history[-10:]
         if len(self.context.command_history) > 10:
             self.context.command_history = self.context.command_history[-10:]
+    def _create_json_system_prompt(self) -> str:
+        """Create system prompt for JSON-based function calling"""
+        functions_json = self._convert_functions_to_json_schema()
+        
+        domain_context = get_domain_context()
+        
+        context_section = ""
+        if domain_context:
+            context_section = f"""
+
+DOMAIN KNOWLEDGE:
+{domain_context}"""
+        
+        return f"""You are an expert seismic navigation assistant. Parse user commands into JSON function calls.
+
+CURRENT CONTEXT:
+- Position: Crossline={int(self._get_seismic_crossline())}, Inline={int(self._get_seismic_inline())}, Depth={int(self._get_seismic_depth())}
+- Scale: {self.context.scale_x:.2f}x zoom
+- Rotation: {self.context.rotation:.2f} radians
+- Visible: Seismic={self.context.seismic_visible}, Attributes={self.context.attribute_visible}, Horizons={self.context.horizon_visible}, Wells={self.context.well_visible}, Profiles={self.context.profile_visible}
+- Last command: {self.context.last_command or 'None'}{context_section}
+
+AVAILABLE FUNCTIONS:
+{functions_json}
+
+RESPONSE FORMAT:
+Return ONLY a JSON object with this structure:
+{{
+    "type": "command" | "multi_command" | "clarification" | "info",
+    "function_calls": [
+        {{
+            "name": "function_name",
+            "arguments": {{
+                "param1": value1,
+                "param2": value2
+            }}
+        }}
+    ],
+    "feedback": "User-friendly description of what will happen",
+    "question": "Clarification question (only if type is clarification)",
+    "message": "Information message (only if type is info)"
+}}
+
+RULES:
+- For single actions: use ONE function call
+- For multiple actions: use MULTIPLE function calls (2-3 max)
+- Be decisive and make reasonable assumptions
+- Use "clarification" type only when truly ambiguous
+- Use "info" type for status queries and help requests"""
+
+    def _create_json_user_prompt(self, user_input: str) -> str:
+        """Create user prompt for JSON-based function calling"""
+        return f"""Parse this seismic navigation command into JSON function calls:
+
+USER INPUT: "{user_input}"
+
+Remember to:
+- Use current context to make intelligent decisions
+- Be decisive and helpful
+- Return valid JSON only
+- Make reasonable assumptions rather than asking for clarification"""
+
+    def _convert_functions_to_json_schema(self) -> str:
+        """Convert Gemini function definitions to JSON schema format"""
+        json_functions = []
+        
+        # Convert each function from Gemini format to JSON schema
+        for func in self.functions:
+            if hasattr(func, 'function_declarations'):
+                for decl in func.function_declarations:
+                    json_func = {
+                        "name": decl.name,
+                        "description": decl.description,
+                        "parameters": {}
+                    }
+                    
+                    # Convert parameters
+                    if hasattr(decl, 'parameters') and decl.parameters:
+                        if hasattr(decl.parameters, 'properties'):
+                            json_func["parameters"] = {}
+                            for prop_name, prop_def in decl.parameters.properties.items():
+                                json_func["parameters"][prop_name] = {
+                                    "type": prop_def.type_.name.lower() if hasattr(prop_def.type_, 'name') else "string",
+                                    "description": prop_def.description if hasattr(prop_def, 'description') else ""
+                                }
+                    
+                    json_functions.append(json_func)
+        
+        return json.dumps(json_functions, indent=2)
+
+    def _process_json_response(self, response_content: str, user_input: str) -> Dict[str, Any]:
+        """Process JSON response from HTTP LLM"""
+        try:
+            # Clean up response content
+            content = response_content.strip()
+            
+            # Remove markdown formatting if present
+            if content.startswith("```json"):
+                content = content.replace("```json", "").replace("```", "").strip()
+            elif content.startswith("```"):
+                content = content.replace("```", "").strip()
+            
+            # Parse JSON
+            parsed = json.loads(content)
+            
+            # Validate response structure
+            if not isinstance(parsed, dict):
+                raise ValueError("Response is not a JSON object")
+            
+            response_type = parsed.get("type", "command")
+            
+            if response_type == "clarification":
+                return {
+                    "type": "clarification",
+                    "question": parsed.get("question", "Could you clarify your request?"),
+                    "options": parsed.get("options", [])
+                }
+            
+            elif response_type == "info":
+                return {
+                    "type": "info",
+                    "message": parsed.get("message", "Information not available")
+                }
+            
+            elif response_type in ["command", "multi_command"]:
+                function_calls = parsed.get("function_calls", [])
+                
+                if not function_calls:
+                    raise ValueError("No function calls found in response")
+                
+                if len(function_calls) == 1:
+                    # Single command
+                    func_call = function_calls[0]
+                    return {
+                        "type": "command",
+                        "method": func_call["name"],
+                        "params": func_call.get("arguments", {}),
+                        "feedback": parsed.get("feedback", f"Executing {func_call['name']}")
+                    }
+                else:
+                    # Multiple commands
+                    commands = []
+                    for func_call in function_calls:
+                        commands.append({
+                            "method": func_call["name"],
+                            "params": func_call.get("arguments", {}),
+                            "feedback": self._generate_function_feedback(func_call["name"], func_call.get("arguments", {}))
+                        })
+                    
+                    return {
+                        "type": "multi_command",
+                        "commands": commands,
+                        "feedback": parsed.get("feedback", f"Executing {len(commands)} commands")
+                    }
+            
+            else:
+                raise ValueError(f"Unknown response type: {response_type}")
+                
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON parsing error: {e}")
+            logger.error(f"Response content: {response_content}")
+            return {
+                "type": "error",
+                "message": "Failed to parse LLM response",
+                "suggestion": "Please try rephrasing your command."
+            }
+        except Exception as e:
+            logger.error(f"Error processing JSON response: {e}")
+            return {
+                "type": "error",
+                "message": f"Error processing response: {str(e)}",
+                "suggestion": "Please try again."
+            }

@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import Optional, Dict, Any
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent / '.win-venv' / 'Lib' / 'site-packages') )
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent / '.win-venv' / 'Lib' / 'site-packages') )
 from dotenv import load_dotenv
 
 
@@ -54,8 +54,8 @@ class EnvConfig:
         if env_file:
             return Path(env_file)
         
-        # Look for .env in project root (2 levels up from src/utils/)
-        project_root = Path(__file__).parent.parent.parent
+        # Look for .env in project root (4 levels up from src/shared/utils/)
+        project_root = Path(__file__).parent.parent.parent.parent
         return project_root / ".env"
     
     @property

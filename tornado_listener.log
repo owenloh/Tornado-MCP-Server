@@ -823,3 +823,994 @@
 2025-07-30 17:58:49,311 - TornadoListener - INFO - Received interrupt signal - exiting development mode
 2025-07-30 17:58:49,311 - TornadoListener - INFO - Cleaning up resources...
 2025-07-30 17:58:49,342 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 14:36:53,448 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 14:36:53,450 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 14:36:53,451 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 14:36:53,451 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 14:36:53,722 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 14:36:53,780 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 14:36:53,785 - TornadoListener - ERROR - ❌ Error initializing bookmark engine: Template file not found: /mnt/c/users/user/【﻿Ｏｗｅｎ】/Tornado MCP/src/data/templates/default_bookmark.html
+2025-08-08 14:36:53,816 - TornadoListener - ERROR - Traceback (most recent call last):
+  File "src/tornado_end/tornado/tornado_listener.py", line 207, in initialize_bookmark_engine
+    self.bookmark_engine = BookmarkHTMLEngineV2(default_template, in_tornado=TORNADO_AVAILABLE)
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 99, in __init__
+    self.load_template(template_name)
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 77, in load_template
+    raise FileNotFoundError(f"Template file not found: {src_template}")
+FileNotFoundError: Template file not found: /mnt/c/users/user/【﻿Ｏｗｅｎ】/Tornado MCP/src/data/templates/default_bookmark.html
+
+2025-08-08 14:36:53,817 - TornadoListener - ERROR - Failed to initialize bookmark engine
+2025-08-08 14:38:26,648 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 14:38:26,649 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 14:38:26,650 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 14:38:26,651 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 14:38:26,743 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 14:38:26,800 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 14:38:26,808 - TornadoListener - ERROR - ❌ Error initializing bookmark engine: Template file not found: /mnt/c/users/user/【﻿Ｏｗｅｎ】/Tornado MCP/src/data/templates/default_bookmark.html
+2025-08-08 14:38:26,838 - TornadoListener - ERROR - Traceback (most recent call last):
+  File "src/tornado_end/tornado/tornado_listener.py", line 207, in initialize_bookmark_engine
+    self.bookmark_engine = BookmarkHTMLEngineV2(default_template, in_tornado=TORNADO_AVAILABLE)
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 99, in __init__
+    self.load_template(template_name)
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 77, in load_template
+    raise FileNotFoundError(f"Template file not found: {src_template}")
+FileNotFoundError: Template file not found: /mnt/c/users/user/【﻿Ｏｗｅｎ】/Tornado MCP/src/data/templates/default_bookmark.html
+
+2025-08-08 14:38:26,839 - TornadoListener - ERROR - Failed to initialize bookmark engine
+2025-08-08 14:41:38,295 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 14:41:38,296 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 14:41:38,297 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 14:41:38,297 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 14:41:38,383 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 14:41:38,435 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 14:41:38,537 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=0, index=-1
+2025-08-08 14:41:38,538 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 14:41:38,544 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 14:41:38,545 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 14:41:38,545 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 14:41:38,546 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 14:41:38,546 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 14:42:35,029 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 14:42:35,030 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 14:42:35,340 - TornadoListener - WARNING - Failed to update system status: Database file not accessible after retries
+2025-08-08 14:42:35,341 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 14:42:38,174 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 14:42:38,175 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 14:42:38,176 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 14:42:38,176 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 14:42:38,260 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 14:42:38,320 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 14:42:38,399 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=0, index=-1
+2025-08-08 14:42:38,400 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 14:42:38,409 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 14:42:38,410 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 14:42:38,411 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 14:42:38,412 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 14:42:38,412 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 14:45:19,858 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 14:45:19,858 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 14:45:19,920 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 14:45:22,597 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 14:45:22,597 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 14:45:22,598 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 14:45:22,599 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 14:45:22,683 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 14:45:22,735 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 14:45:22,814 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=0, index=-1
+2025-08-08 14:45:22,815 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 14:45:22,823 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 14:45:22,824 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 14:45:22,824 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 14:45:22,825 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 14:45:22,825 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 14:49:46,355 - TornadoListener - INFO - Processing command: 1592d688-7615-4665-a840-3e7531eceae3 - undo
+2025-08-08 14:49:46,356 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 1592d688-7615-4665-a840-3e7531eceae3: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:49:46,357 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=False, undo_count=0
+2025-08-08 14:49:46,357 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=1, index=0, undo_count=0
+2025-08-08 14:49:46,358 - TornadoListener - WARNING - ❌ Cannot undo: undo_count=0
+2025-08-08 14:49:46,454 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:49:46,505 - TornadoListener - INFO - ✅ Command 1592d688-7615-4665-a840-3e7531eceae3 executed successfully
+2025-08-08 14:49:46,506 - TornadoListener - INFO - Processing command: 9f5025ad-a041-487b-9c6a-c13abf66da42 - undo
+2025-08-08 14:49:46,507 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 9f5025ad-a041-487b-9c6a-c13abf66da42: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:49:46,508 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=False, undo_count=0
+2025-08-08 14:49:46,508 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=1, index=0, undo_count=0
+2025-08-08 14:49:46,509 - TornadoListener - WARNING - ❌ Cannot undo: undo_count=0
+2025-08-08 14:49:46,587 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:49:46,641 - TornadoListener - INFO - ✅ Command 9f5025ad-a041-487b-9c6a-c13abf66da42 executed successfully
+2025-08-08 14:50:34,383 - TornadoListener - INFO - Processing command: 54a97bde-bb1d-43ea-87a2-c9d9d4166e10 - rotate_right
+2025-08-08 14:50:34,384 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 54a97bde-bb1d-43ea-87a2-c9d9d4166e10: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:50:34,384 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, -0.7853981633974483) to (0.0, 0.39269908169872414, -0.6853981633974483)
+2025-08-08 14:50:34,392 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 14:50:34,473 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:50:34,527 - TornadoListener - INFO - ✅ Command 54a97bde-bb1d-43ea-87a2-c9d9d4166e10 executed successfully
+2025-08-08 14:50:49,001 - TornadoListener - INFO - Processing command: fec9d42c-d98b-4985-98f2-932a611e6088 - update_slice_visibility
+2025-08-08 14:50:49,001 - TornadoListener - WARNING - ⚠️ Could not update status to processing for fec9d42c-d98b-4985-98f2-932a611e6088: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:50:49,002 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=False
+2025-08-08 14:50:49,003 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=1
+2025-08-08 14:50:49,003 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to False
+2025-08-08 14:50:49,004 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to False
+2025-08-08 14:50:49,004 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to False
+2025-08-08 14:50:49,012 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 14:50:49,012 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=2
+2025-08-08 14:50:49,102 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:50:49,158 - TornadoListener - INFO - ✅ Command fec9d42c-d98b-4985-98f2-932a611e6088 executed successfully
+2025-08-08 14:51:16,206 - TornadoListener - INFO - Processing command: 2f9a631a-deda-4add-b371-7a8b89c005a7 - undo
+2025-08-08 14:51:16,206 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 2f9a631a-deda-4add-b371-7a8b89c005a7: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:51:16,207 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=2
+2025-08-08 14:51:16,208 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=3, index=2, undo_count=2
+2025-08-08 14:51:16,208 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=3, current_index=2, can_undo=True
+2025-08-08 14:51:16,216 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 1
+2025-08-08 14:51:16,217 - TornadoListener - INFO - 🔍 AFTER undo: history_length=3, index=1, undo_count=1
+2025-08-08 14:51:16,217 - TornadoListener - INFO - ✅ Undo performed: new undo_count=1
+2025-08-08 14:51:16,307 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:51:16,369 - TornadoListener - INFO - ✅ Command 2f9a631a-deda-4add-b371-7a8b89c005a7 executed successfully
+2025-08-08 14:51:16,370 - TornadoListener - INFO - Processing command: 3f1c1e6e-180c-4535-a8b6-82f94177ffc8 - undo
+2025-08-08 14:51:16,371 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 3f1c1e6e-180c-4535-a8b6-82f94177ffc8: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:51:16,372 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=1
+2025-08-08 14:51:16,372 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=3, index=1, undo_count=1
+2025-08-08 14:51:16,373 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=3, current_index=1, can_undo=True
+2025-08-08 14:51:16,383 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 0
+2025-08-08 14:51:16,383 - TornadoListener - INFO - 🔍 AFTER undo: history_length=3, index=0, undo_count=0
+2025-08-08 14:51:16,384 - TornadoListener - INFO - ✅ Undo performed: new undo_count=0
+2025-08-08 14:51:16,457 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:51:16,515 - TornadoListener - INFO - ✅ Command 3f1c1e6e-180c-4535-a8b6-82f94177ffc8 executed successfully
+2025-08-08 14:51:33,118 - TornadoListener - INFO - Processing command: 1b899414-b6ef-432e-80dc-40fe08fda5bf - update_slice_visibility
+2025-08-08 14:51:33,118 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 1b899414-b6ef-432e-80dc-40fe08fda5bf: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:51:33,119 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=True, y=True, z=True
+2025-08-08 14:51:33,119 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=0
+2025-08-08 14:51:33,120 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to True
+2025-08-08 14:51:33,121 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to True
+2025-08-08 14:51:33,121 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to True
+2025-08-08 14:51:33,129 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 14:51:33,130 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=True, undo_count=1
+2025-08-08 14:51:33,219 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:51:33,274 - TornadoListener - INFO - ✅ Command 1b899414-b6ef-432e-80dc-40fe08fda5bf executed successfully
+2025-08-08 14:54:25,470 - TornadoListener - INFO - Processing command: cd5eba7c-e1f3-4e12-bb5c-d7f177465df8 - update_slice_visibility
+2025-08-08 14:54:25,471 - TornadoListener - WARNING - ⚠️ Could not update status to processing for cd5eba7c-e1f3-4e12-bb5c-d7f177465df8: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:25,472 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=True, y=None, z=None
+2025-08-08 14:54:25,472 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=True, z_visible=True, undo_count=1
+2025-08-08 14:54:25,473 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to True
+2025-08-08 14:54:25,481 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 14:54:25,482 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=True, undo_count=2
+2025-08-08 14:54:25,565 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:25,620 - TornadoListener - INFO - ✅ Command cd5eba7c-e1f3-4e12-bb5c-d7f177465df8 executed successfully
+2025-08-08 14:54:33,891 - TornadoListener - INFO - Processing command: ccfdfd4a-a797-415f-8bea-96adba6893d9 - update_slice_visibility
+2025-08-08 14:54:33,891 - TornadoListener - WARNING - ⚠️ Could not update status to processing for ccfdfd4a-a797-415f-8bea-96adba6893d9: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:33,892 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=None, z=None
+2025-08-08 14:54:33,892 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=True, z_visible=True, undo_count=2
+2025-08-08 14:54:33,893 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to False
+2025-08-08 14:54:33,901 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 14:54:33,901 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=True, z_visible=True, undo_count=3
+2025-08-08 14:54:33,983 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:34,043 - TornadoListener - INFO - ✅ Command ccfdfd4a-a797-415f-8bea-96adba6893d9 executed successfully
+2025-08-08 14:54:38,182 - TornadoListener - INFO - Processing command: 0d62f57f-b9e7-4079-9ea3-c9de1b9dcca7 - update_slice_visibility
+2025-08-08 14:54:38,183 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 0d62f57f-b9e7-4079-9ea3-c9de1b9dcca7: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:38,183 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=False, z=None
+2025-08-08 14:54:38,184 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=True, z_visible=True, undo_count=3
+2025-08-08 14:54:38,185 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from True to False
+2025-08-08 14:54:38,192 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=5, index=4, can_undo=True, undo_count=4
+2025-08-08 14:54:38,193 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=True, undo_count=4
+2025-08-08 14:54:38,280 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:38,331 - TornadoListener - INFO - ✅ Command 0d62f57f-b9e7-4079-9ea3-c9de1b9dcca7 executed successfully
+2025-08-08 14:54:44,610 - TornadoListener - INFO - Processing command: 96270f9d-8910-4c79-8804-e08e914d4809 - update_slice_visibility
+2025-08-08 14:54:44,611 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 96270f9d-8910-4c79-8804-e08e914d4809: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:44,612 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=None, z=False
+2025-08-08 14:54:44,612 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=False, z_visible=True, undo_count=4
+2025-08-08 14:54:44,613 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from True to False
+2025-08-08 14:54:44,623 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=6, index=5, can_undo=True, undo_count=5
+2025-08-08 14:54:44,624 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=5
+2025-08-08 14:54:44,696 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:44,745 - TornadoListener - INFO - ✅ Command 96270f9d-8910-4c79-8804-e08e914d4809 executed successfully
+2025-08-08 14:54:50,984 - TornadoListener - INFO - Processing command: d1d03b6d-37a6-4e2c-9c43-55a3b735e519 - undo
+2025-08-08 14:54:50,985 - TornadoListener - WARNING - ⚠️ Could not update status to processing for d1d03b6d-37a6-4e2c-9c43-55a3b735e519: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:50,986 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=5
+2025-08-08 14:54:50,987 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=6, index=5, undo_count=5
+2025-08-08 14:54:50,988 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=6, current_index=5, can_undo=True
+2025-08-08 14:54:50,998 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 4
+2025-08-08 14:54:50,999 - TornadoListener - INFO - 🔍 AFTER undo: history_length=6, index=4, undo_count=4
+2025-08-08 14:54:50,999 - TornadoListener - INFO - ✅ Undo performed: new undo_count=4
+2025-08-08 14:54:51,089 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:51,147 - TornadoListener - INFO - ✅ Command d1d03b6d-37a6-4e2c-9c43-55a3b735e519 executed successfully
+2025-08-08 14:54:51,148 - TornadoListener - INFO - Processing command: c8960dd9-5560-44b9-8d06-6525e1ee7f21 - undo
+2025-08-08 14:54:51,148 - TornadoListener - WARNING - ⚠️ Could not update status to processing for c8960dd9-5560-44b9-8d06-6525e1ee7f21: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:51,149 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=4
+2025-08-08 14:54:51,149 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=6, index=4, undo_count=4
+2025-08-08 14:54:51,150 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=6, current_index=4, can_undo=True
+2025-08-08 14:54:51,157 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 3
+2025-08-08 14:54:51,158 - TornadoListener - INFO - 🔍 AFTER undo: history_length=6, index=3, undo_count=3
+2025-08-08 14:54:51,159 - TornadoListener - INFO - ✅ Undo performed: new undo_count=3
+2025-08-08 14:54:51,240 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:51,292 - TornadoListener - INFO - ✅ Command c8960dd9-5560-44b9-8d06-6525e1ee7f21 executed successfully
+2025-08-08 14:54:55,433 - TornadoListener - INFO - Processing command: be84f354-60f1-49b1-b7d5-467b26510f14 - redo
+2025-08-08 14:54:55,433 - TornadoListener - WARNING - ⚠️ Could not update status to processing for be84f354-60f1-49b1-b7d5-467b26510f14: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:55,442 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 4
+2025-08-08 14:54:55,531 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:55,584 - TornadoListener - INFO - ✅ Command be84f354-60f1-49b1-b7d5-467b26510f14 executed successfully
+2025-08-08 14:54:55,585 - TornadoListener - INFO - Processing command: 1f606c2a-6056-4c10-b697-e813061ac1e2 - redo
+2025-08-08 14:54:55,585 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 1f606c2a-6056-4c10-b697-e813061ac1e2: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:54:55,594 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 5
+2025-08-08 14:54:55,669 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:54:55,723 - TornadoListener - INFO - ✅ Command 1f606c2a-6056-4c10-b697-e813061ac1e2 executed successfully
+2025-08-08 14:59:25,066 - TornadoListener - INFO - Processing command: 36a5e5ff-698c-40da-a416-6cc85ba68f47 - undo
+2025-08-08 14:59:25,067 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 36a5e5ff-698c-40da-a416-6cc85ba68f47: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:59:25,067 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=5
+2025-08-08 14:59:25,068 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=6, index=5, undo_count=5
+2025-08-08 14:59:25,068 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=6, current_index=5, can_undo=True
+2025-08-08 14:59:25,076 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 4
+2025-08-08 14:59:25,076 - TornadoListener - INFO - 🔍 AFTER undo: history_length=6, index=4, undo_count=4
+2025-08-08 14:59:25,077 - TornadoListener - INFO - ✅ Undo performed: new undo_count=4
+2025-08-08 14:59:25,165 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:59:25,222 - TornadoListener - INFO - ✅ Command 36a5e5ff-698c-40da-a416-6cc85ba68f47 executed successfully
+2025-08-08 14:59:25,223 - TornadoListener - INFO - Processing command: 59d21b53-99a3-4ad0-880c-99e711ec50ac - undo
+2025-08-08 14:59:25,223 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 59d21b53-99a3-4ad0-880c-99e711ec50ac: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:59:25,224 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=4
+2025-08-08 14:59:25,224 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=6, index=4, undo_count=4
+2025-08-08 14:59:25,225 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=6, current_index=4, can_undo=True
+2025-08-08 14:59:25,234 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 3
+2025-08-08 14:59:25,234 - TornadoListener - INFO - 🔍 AFTER undo: history_length=6, index=3, undo_count=3
+2025-08-08 14:59:25,235 - TornadoListener - INFO - ✅ Undo performed: new undo_count=3
+2025-08-08 14:59:25,309 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:59:25,359 - TornadoListener - INFO - ✅ Command 59d21b53-99a3-4ad0-880c-99e711ec50ac executed successfully
+2025-08-08 14:59:29,488 - TornadoListener - INFO - Processing command: a550922c-70ed-4dc9-8d48-34784c708bd2 - redo
+2025-08-08 14:59:29,489 - TornadoListener - WARNING - ⚠️ Could not update status to processing for a550922c-70ed-4dc9-8d48-34784c708bd2: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:59:29,498 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 4
+2025-08-08 14:59:29,751 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:59:29,809 - TornadoListener - INFO - ✅ Command a550922c-70ed-4dc9-8d48-34784c708bd2 executed successfully
+2025-08-08 14:59:29,810 - TornadoListener - INFO - Processing command: 3a745023-da32-4434-94b9-5f183252868b - redo
+2025-08-08 14:59:29,810 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 3a745023-da32-4434-94b9-5f183252868b: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 14:59:29,818 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 5
+2025-08-08 14:59:29,897 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 14:59:29,947 - TornadoListener - INFO - ✅ Command 3a745023-da32-4434-94b9-5f183252868b executed successfully
+2025-08-08 15:08:21,984 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 15:08:21,985 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 15:08:22,046 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 15:08:24,538 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 15:08:24,539 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 15:08:24,540 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 15:08:24,541 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 15:08:24,624 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 15:08:24,680 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 15:08:24,759 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=0, index=-1
+2025-08-08 15:08:24,760 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 15:08:24,770 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 15:08:24,770 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 15:08:24,771 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 15:08:24,771 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 15:08:24,772 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 15:08:57,976 - TornadoListener - INFO - Processing command: b4df1179-7295-4cdd-bb73-43cca70cc2fc - update_slice_visibility
+2025-08-08 15:08:57,977 - TornadoListener - WARNING - ⚠️ Could not update status to processing for b4df1179-7295-4cdd-bb73-43cca70cc2fc: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:08:57,977 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=False
+2025-08-08 15:08:57,978 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=0
+2025-08-08 15:08:57,979 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to False
+2025-08-08 15:08:57,979 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to False
+2025-08-08 15:08:57,980 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to False
+2025-08-08 15:08:57,988 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 15:08:57,988 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=1
+2025-08-08 15:08:58,072 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:08:58,126 - TornadoListener - INFO - ✅ Command b4df1179-7295-4cdd-bb73-43cca70cc2fc executed successfully
+2025-08-08 15:09:04,322 - TornadoListener - INFO - Processing command: 2e3d79e4-2bec-487f-ad9f-7cba05243326 - update_slice_visibility
+2025-08-08 15:09:04,323 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 2e3d79e4-2bec-487f-ad9f-7cba05243326: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:09:04,323 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=True, y=None, z=None
+2025-08-08 15:09:04,324 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=False, z_visible=False, undo_count=1
+2025-08-08 15:09:04,324 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from False to True
+2025-08-08 15:09:04,333 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 15:09:04,334 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=False, z_visible=False, undo_count=2
+2025-08-08 15:09:04,421 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:09:04,481 - TornadoListener - INFO - ✅ Command 2e3d79e4-2bec-487f-ad9f-7cba05243326 executed successfully
+2025-08-08 15:09:06,741 - TornadoListener - INFO - Processing command: 383cdf14-745d-4836-a3ec-40f9c09fb293 - update_slice_visibility
+2025-08-08 15:09:06,742 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 383cdf14-745d-4836-a3ec-40f9c09fb293: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:09:06,743 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=True, z=None
+2025-08-08 15:09:06,743 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=2
+2025-08-08 15:09:06,744 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to True
+2025-08-08 15:09:06,751 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 15:09:06,751 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=False, undo_count=3
+2025-08-08 15:09:06,836 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:09:06,889 - TornadoListener - INFO - ✅ Command 383cdf14-745d-4836-a3ec-40f9c09fb293 executed successfully
+2025-08-08 15:09:11,022 - TornadoListener - INFO - Processing command: cce40cd3-c641-450d-b68c-4b18e92620e7 - update_slice_visibility
+2025-08-08 15:09:11,023 - TornadoListener - WARNING - ⚠️ Could not update status to processing for cce40cd3-c641-450d-b68c-4b18e92620e7: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:09:11,024 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=None, z=True
+2025-08-08 15:09:11,025 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=True, z_visible=False, undo_count=3
+2025-08-08 15:09:11,025 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to True
+2025-08-08 15:09:11,034 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=5, index=4, can_undo=True, undo_count=4
+2025-08-08 15:09:11,035 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=True, undo_count=4
+2025-08-08 15:09:11,122 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:09:11,184 - TornadoListener - INFO - ✅ Command cce40cd3-c641-450d-b68c-4b18e92620e7 executed successfully
+2025-08-08 15:09:13,248 - TornadoListener - INFO - Processing command: 804ab92c-8b9d-4de1-a66b-00a25f8da8c7 - undo
+2025-08-08 15:09:13,249 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 804ab92c-8b9d-4de1-a66b-00a25f8da8c7: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:09:13,250 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=4
+2025-08-08 15:09:13,250 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=5, index=4, undo_count=4
+2025-08-08 15:09:13,251 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=5, current_index=4, can_undo=True
+2025-08-08 15:09:13,258 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 3
+2025-08-08 15:09:13,258 - TornadoListener - INFO - 🔍 AFTER undo: history_length=5, index=3, undo_count=3
+2025-08-08 15:09:13,259 - TornadoListener - INFO - ✅ Undo performed: new undo_count=3
+2025-08-08 15:09:13,337 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:09:13,397 - TornadoListener - INFO - ✅ Command 804ab92c-8b9d-4de1-a66b-00a25f8da8c7 executed successfully
+2025-08-08 15:09:13,398 - TornadoListener - INFO - Processing command: 34b8eb60-5563-4ee8-8393-66c69a647ead - undo
+2025-08-08 15:09:13,398 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 34b8eb60-5563-4ee8-8393-66c69a647ead: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:09:13,399 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=3
+2025-08-08 15:09:13,399 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=5, index=3, undo_count=3
+2025-08-08 15:09:13,400 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=5, current_index=3, can_undo=True
+2025-08-08 15:09:13,407 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 2
+2025-08-08 15:09:13,407 - TornadoListener - INFO - 🔍 AFTER undo: history_length=5, index=2, undo_count=2
+2025-08-08 15:09:13,408 - TornadoListener - INFO - ✅ Undo performed: new undo_count=2
+2025-08-08 15:09:13,485 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:09:13,533 - TornadoListener - INFO - ✅ Command 34b8eb60-5563-4ee8-8393-66c69a647ead executed successfully
+2025-08-08 15:12:13,058 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 15:12:13,060 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 15:12:13,121 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 15:12:16,165 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 15:12:16,166 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 15:12:16,167 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 15:12:16,167 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 15:12:16,261 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 15:12:16,320 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 15:12:16,393 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=0, index=-1
+2025-08-08 15:12:16,394 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 15:12:16,402 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 15:12:16,403 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 15:12:16,403 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 15:12:16,404 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 15:12:16,405 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 15:12:24,717 - TornadoListener - INFO - Processing command: b1ca71d7-db5f-4ee7-a0d2-df9aa9300dd5 - update_slice_visibility
+2025-08-08 15:12:24,717 - TornadoListener - WARNING - ⚠️ Could not update status to processing for b1ca71d7-db5f-4ee7-a0d2-df9aa9300dd5: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:12:24,718 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=False
+2025-08-08 15:12:24,719 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=0
+2025-08-08 15:12:24,719 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to False
+2025-08-08 15:12:24,720 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to False
+2025-08-08 15:12:24,720 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to False
+2025-08-08 15:12:24,730 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 15:12:24,730 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=1
+2025-08-08 15:12:24,815 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:12:24,868 - TornadoListener - INFO - ✅ Command b1ca71d7-db5f-4ee7-a0d2-df9aa9300dd5 executed successfully
+2025-08-08 15:12:29,005 - TornadoListener - INFO - Processing command: 7047f322-37e8-42c0-92bc-87de01fbf397 - update_slice_visibility
+2025-08-08 15:12:29,006 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 7047f322-37e8-42c0-92bc-87de01fbf397: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:12:29,006 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=True, y=None, z=None
+2025-08-08 15:12:29,007 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=False, z_visible=False, undo_count=1
+2025-08-08 15:12:29,008 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from False to True
+2025-08-08 15:12:29,018 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 15:12:29,018 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=False, z_visible=False, undo_count=2
+2025-08-08 15:12:29,105 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:12:29,164 - TornadoListener - INFO - ✅ Command 7047f322-37e8-42c0-92bc-87de01fbf397 executed successfully
+2025-08-08 15:12:31,231 - TornadoListener - INFO - Processing command: f0bf9a69-3293-40fb-abd2-c0754c19c9ad - update_slice_visibility
+2025-08-08 15:12:31,232 - TornadoListener - WARNING - ⚠️ Could not update status to processing for f0bf9a69-3293-40fb-abd2-c0754c19c9ad: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:12:31,232 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=True, z=None
+2025-08-08 15:12:31,233 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=2
+2025-08-08 15:12:31,233 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to True
+2025-08-08 15:12:31,241 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 15:12:31,242 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=False, undo_count=3
+2025-08-08 15:12:31,322 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:12:31,374 - TornadoListener - INFO - ✅ Command f0bf9a69-3293-40fb-abd2-c0754c19c9ad executed successfully
+2025-08-08 15:12:33,443 - TornadoListener - INFO - Processing command: aa5cd5a3-e4a1-410e-bd74-c8adc3a4f24a - update_slice_visibility
+2025-08-08 15:12:33,444 - TornadoListener - WARNING - ⚠️ Could not update status to processing for aa5cd5a3-e4a1-410e-bd74-c8adc3a4f24a: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:12:33,445 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=None, z=True
+2025-08-08 15:12:33,446 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=True, z_visible=False, undo_count=3
+2025-08-08 15:12:33,446 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to True
+2025-08-08 15:12:33,455 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=5, index=4, can_undo=True, undo_count=4
+2025-08-08 15:12:33,455 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=True, undo_count=4
+2025-08-08 15:12:33,542 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:12:33,598 - TornadoListener - INFO - ✅ Command aa5cd5a3-e4a1-410e-bd74-c8adc3a4f24a executed successfully
+2025-08-08 15:12:39,858 - TornadoListener - INFO - Processing command: 56e3ab1d-8776-4ef3-b69c-6b185cd14812 - undo
+2025-08-08 15:12:39,859 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 56e3ab1d-8776-4ef3-b69c-6b185cd14812: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:12:39,859 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=4
+2025-08-08 15:12:39,860 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=5, index=4, undo_count=4
+2025-08-08 15:12:39,860 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=5, current_index=4, can_undo=True
+2025-08-08 15:12:39,868 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 3
+2025-08-08 15:12:39,869 - TornadoListener - INFO - 🔍 AFTER undo: history_length=5, index=3, undo_count=3
+2025-08-08 15:12:39,870 - TornadoListener - INFO - ✅ Undo performed: new undo_count=3
+2025-08-08 15:12:40,109 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:12:40,166 - TornadoListener - INFO - ✅ Command 56e3ab1d-8776-4ef3-b69c-6b185cd14812 executed successfully
+2025-08-08 15:12:40,167 - TornadoListener - INFO - Processing command: a386d3f8-df5e-47f7-81ff-5bf87e9ee70f - undo
+2025-08-08 15:12:40,168 - TornadoListener - WARNING - ⚠️ Could not update status to processing for a386d3f8-df5e-47f7-81ff-5bf87e9ee70f: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:12:40,168 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=3
+2025-08-08 15:12:40,169 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=5, index=3, undo_count=3
+2025-08-08 15:12:40,169 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=5, current_index=3, can_undo=True
+2025-08-08 15:12:40,178 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 2
+2025-08-08 15:12:40,179 - TornadoListener - INFO - 🔍 AFTER undo: history_length=5, index=2, undo_count=2
+2025-08-08 15:12:40,180 - TornadoListener - INFO - ✅ Undo performed: new undo_count=2
+2025-08-08 15:12:40,256 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:12:40,310 - TornadoListener - INFO - ✅ Command a386d3f8-df5e-47f7-81ff-5bf87e9ee70f executed successfully
+2025-08-08 15:15:51,106 - TornadoListener - INFO - Processing command: f4eaf58c-3ef5-490a-8c4a-a9904dc12d19 - redo
+2025-08-08 15:15:51,106 - TornadoListener - WARNING - ⚠️ Could not update status to processing for f4eaf58c-3ef5-490a-8c4a-a9904dc12d19: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:15:51,115 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 3
+2025-08-08 15:15:51,201 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:15:51,257 - TornadoListener - INFO - ✅ Command f4eaf58c-3ef5-490a-8c4a-a9904dc12d19 executed successfully
+2025-08-08 15:15:55,385 - TornadoListener - INFO - Processing command: 484075f8-bd92-42f0-816a-52a0ce4b18fe - redo
+2025-08-08 15:15:55,386 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 484075f8-bd92-42f0-816a-52a0ce4b18fe: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:15:55,393 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 4
+2025-08-08 15:15:55,487 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:15:55,550 - TornadoListener - INFO - ✅ Command 484075f8-bd92-42f0-816a-52a0ce4b18fe executed successfully
+2025-08-08 15:16:01,732 - TornadoListener - INFO - Processing command: 48a536c1-3785-4ec5-91a2-c3b69d3227f5 - undo
+2025-08-08 15:16:01,733 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 48a536c1-3785-4ec5-91a2-c3b69d3227f5: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:16:01,734 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=4
+2025-08-08 15:16:01,734 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=5, index=4, undo_count=4
+2025-08-08 15:16:01,735 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=5, current_index=4, can_undo=True
+2025-08-08 15:16:01,743 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 3
+2025-08-08 15:16:01,743 - TornadoListener - INFO - 🔍 AFTER undo: history_length=5, index=3, undo_count=3
+2025-08-08 15:16:01,744 - TornadoListener - INFO - ✅ Undo performed: new undo_count=3
+2025-08-08 15:16:01,822 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:16:01,878 - TornadoListener - INFO - ✅ Command 48a536c1-3785-4ec5-91a2-c3b69d3227f5 executed successfully
+2025-08-08 15:16:06,070 - TornadoListener - INFO - Processing command: 42b0db51-bb2d-4cae-b019-a92cb930b0d3 - undo
+2025-08-08 15:16:06,071 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 42b0db51-bb2d-4cae-b019-a92cb930b0d3: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:16:06,071 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=3
+2025-08-08 15:16:06,072 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=5, index=3, undo_count=3
+2025-08-08 15:16:06,072 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=5, current_index=3, can_undo=True
+2025-08-08 15:16:06,080 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 2
+2025-08-08 15:16:06,081 - TornadoListener - INFO - 🔍 AFTER undo: history_length=5, index=2, undo_count=2
+2025-08-08 15:16:06,081 - TornadoListener - INFO - ✅ Undo performed: new undo_count=2
+2025-08-08 15:16:06,160 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:16:06,216 - TornadoListener - INFO - ✅ Command 42b0db51-bb2d-4cae-b019-a92cb930b0d3 executed successfully
+2025-08-08 15:16:10,349 - TornadoListener - INFO - Processing command: 8f9f47be-304a-4953-a5b9-0a7c8828b21e - undo
+2025-08-08 15:16:10,350 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 8f9f47be-304a-4953-a5b9-0a7c8828b21e: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:16:10,350 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=2
+2025-08-08 15:16:10,351 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=5, index=2, undo_count=2
+2025-08-08 15:16:10,351 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=5, current_index=2, can_undo=True
+2025-08-08 15:16:10,361 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 1
+2025-08-08 15:16:10,362 - TornadoListener - INFO - 🔍 AFTER undo: history_length=5, index=1, undo_count=1
+2025-08-08 15:16:10,364 - TornadoListener - INFO - ✅ Undo performed: new undo_count=1
+2025-08-08 15:16:10,450 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:16:10,512 - TornadoListener - INFO - ✅ Command 8f9f47be-304a-4953-a5b9-0a7c8828b21e executed successfully
+2025-08-08 15:25:50,266 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 15:25:50,267 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 15:25:50,324 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 15:25:53,585 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 15:25:53,586 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 15:25:53,586 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 15:25:53,587 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 15:25:53,670 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 15:25:53,721 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 15:25:53,790 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=0, index=-1
+2025-08-08 15:25:53,790 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 15:25:53,798 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 15:25:53,799 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 15:25:53,799 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 15:25:53,800 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 15:25:53,801 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 15:26:16,663 - TornadoListener - INFO - Processing command: 60c521bd-9f7c-4228-ac8e-8e6bd57809f5 - update_colormap
+2025-08-08 15:26:16,664 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 60c521bd-9f7c-4228-ac8e-8e6bd57809f5: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:26:16,664 - tornado_end.core.bookmark_engine_v2 - INFO - Colormap changed from 3 to 2
+2025-08-08 15:26:16,673 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 15:26:16,759 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:26:16,822 - TornadoListener - INFO - ✅ Command 60c521bd-9f7c-4228-ac8e-8e6bd57809f5 executed successfully
+2025-08-08 15:26:20,964 - TornadoListener - INFO - Processing command: 1a80a63b-8734-4217-ac8c-e14a34edc5c3 - update_colormap
+2025-08-08 15:26:20,965 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 1a80a63b-8734-4217-ac8c-e14a34edc5c3: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:26:20,966 - tornado_end.core.bookmark_engine_v2 - INFO - Colormap changed from 2 to 15
+2025-08-08 15:26:20,974 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 15:26:21,064 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:26:21,113 - TornadoListener - INFO - ✅ Command 1a80a63b-8734-4217-ac8c-e14a34edc5c3 executed successfully
+2025-08-08 15:30:09,055 - TornadoListener - INFO - Processing command: 4a63da36-2bca-4b13-a3f0-ab42d8b8a6f4 - update_colormap
+2025-08-08 15:30:09,056 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 4a63da36-2bca-4b13-a3f0-ab42d8b8a6f4: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:30:09,056 - tornado_end.core.bookmark_engine_v2 - INFO - Colormap changed from 15 to 3
+2025-08-08 15:30:09,065 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 15:30:09,158 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:30:09,215 - TornadoListener - INFO - ✅ Command 4a63da36-2bca-4b13-a3f0-ab42d8b8a6f4 executed successfully
+2025-08-08 15:30:34,098 - TornadoListener - INFO - Processing command: 453d56f9-b397-4852-a855-882a1f6366aa - undo
+2025-08-08 15:30:34,099 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 453d56f9-b397-4852-a855-882a1f6366aa: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:30:34,099 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=3
+2025-08-08 15:30:34,100 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=4, index=3, undo_count=3
+2025-08-08 15:30:34,100 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=4, current_index=3, can_undo=True
+2025-08-08 15:30:34,107 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 2
+2025-08-08 15:30:34,108 - TornadoListener - INFO - 🔍 AFTER undo: history_length=4, index=2, undo_count=2
+2025-08-08 15:30:34,108 - TornadoListener - INFO - ✅ Undo performed: new undo_count=2
+2025-08-08 15:30:34,187 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:30:34,241 - TornadoListener - INFO - ✅ Command 453d56f9-b397-4852-a855-882a1f6366aa executed successfully
+2025-08-08 15:31:32,452 - TornadoListener - INFO - Processing command: 1f321332-4b0b-4603-ac49-9b55f65c1f17 - update_colormap
+2025-08-08 15:31:32,453 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 1f321332-4b0b-4603-ac49-9b55f65c1f17: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:31:32,454 - tornado_end.core.bookmark_engine_v2 - INFO - Colormap changed from 15 to 6
+2025-08-08 15:31:32,462 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 15:31:32,550 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:31:32,611 - TornadoListener - INFO - ✅ Command 1f321332-4b0b-4603-ac49-9b55f65c1f17 executed successfully
+2025-08-08 15:31:49,172 - TornadoListener - INFO - Processing command: 9331620f-16fb-4283-89ce-7935ea703952 - rotate_right
+2025-08-08 15:31:49,173 - TornadoListener - WARNING - ⚠️ Could not update status to processing for 9331620f-16fb-4283-89ce-7935ea703952: 'CommandQueueManager' object has no attribute 'mark_command_processing'
+2025-08-08 15:31:49,174 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, -0.7853981633974483) to (0.0, 0.39269908169872414, -0.6853981633974483)
+2025-08-08 15:31:49,183 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=5, index=4, can_undo=True, undo_count=4
+2025-08-08 15:31:49,266 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:31:49,320 - TornadoListener - INFO - ✅ Command 9331620f-16fb-4283-89ce-7935ea703952 executed successfully
+2025-08-08 15:36:49,600 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 15:36:49,601 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 15:36:49,664 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 15:36:53,476 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 15:36:53,477 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 15:36:53,478 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 15:36:53,478 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 15:36:53,570 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 15:36:53,630 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 15:36:53,708 - TornadoListener - ERROR - ❌ Error initializing bookmark engine: 'BookmarkHTMLEngineV2' object has no attribute 'tornado'
+2025-08-08 15:36:53,737 - TornadoListener - ERROR - Traceback (most recent call last):
+  File "src/tornado_end/tornado/tornado_listener.py", line 207, in initialize_bookmark_engine
+    self.bookmark_engine = BookmarkHTMLEngineV2(default_template, in_tornado=TORNADO_AVAILABLE)
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 102, in __init__
+    self.load_template(template_name)
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 87, in load_template
+    self.update_params()
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 199, in update_params
+    self._load_into_tornado(self.temp_bkm_path)
+  File "src/tornado_end/core/bookmark_engine_v2.py", line 255, in _load_into_tornado
+    if not self.tornado:
+AttributeError: 'BookmarkHTMLEngineV2' object has no attribute 'tornado'
+
+2025-08-08 15:36:53,738 - TornadoListener - ERROR - Failed to initialize bookmark engine
+2025-08-08 15:39:33,395 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 15:39:33,395 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 15:39:33,396 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 15:39:33,397 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 15:39:33,481 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 15:39:33,545 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 15:39:33,639 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 15:39:33,641 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=1, index=0
+2025-08-08 15:39:33,642 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 15:39:33,666 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 15:39:33,666 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 15:39:33,667 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 15:39:33,667 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 15:39:33,668 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 15:39:33,717 - TornadoListener - INFO - Processing command: 7a89e93b-f444-4df7-a738-e7580b058e4d - update_slice_visibility
+2025-08-08 15:39:33,772 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=False
+2025-08-08 15:39:33,773 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=1
+2025-08-08 15:39:33,773 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to False
+2025-08-08 15:39:33,774 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to False
+2025-08-08 15:39:33,775 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to False
+2025-08-08 15:39:33,783 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 15:39:33,783 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=2
+2025-08-08 15:39:33,868 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:39:33,921 - TornadoListener - INFO - ✅ Command 7a89e93b-f444-4df7-a738-e7580b058e4d executed successfully
+2025-08-08 15:39:52,523 - TornadoListener - INFO - Processing command: 37d73f3c-edf6-4d2a-8c4e-e2130bccc595 - undo
+2025-08-08 15:39:52,581 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=2
+2025-08-08 15:39:52,582 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=3, index=2, undo_count=2
+2025-08-08 15:39:52,583 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=3, current_index=2, can_undo=True
+2025-08-08 15:39:52,591 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 1
+2025-08-08 15:39:52,592 - TornadoListener - INFO - 🔍 AFTER undo: history_length=3, index=1, undo_count=1
+2025-08-08 15:39:52,593 - TornadoListener - INFO - ✅ Undo performed: new undo_count=1
+2025-08-08 15:39:52,663 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:39:52,716 - TornadoListener - INFO - ✅ Command 37d73f3c-edf6-4d2a-8c4e-e2130bccc595 executed successfully
+2025-08-08 15:39:54,839 - TornadoListener - INFO - Processing command: 9b480339-2df2-418d-9d29-b0f7e54b2321 - redo
+2025-08-08 15:39:54,907 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 2
+2025-08-08 15:39:55,155 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:39:55,213 - TornadoListener - INFO - ✅ Command 9b480339-2df2-418d-9d29-b0f7e54b2321 executed successfully
+2025-08-08 15:40:01,440 - TornadoListener - INFO - Processing command: 2da2972e-2e1f-413b-abdd-861ab255c511 - update_slice_visibility
+2025-08-08 15:40:01,496 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=True, y=None, z=None
+2025-08-08 15:40:01,496 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=False, z_visible=False, undo_count=2
+2025-08-08 15:40:01,497 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from False to True
+2025-08-08 15:40:01,505 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 15:40:01,506 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=False, z_visible=False, undo_count=3
+2025-08-08 15:40:01,583 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:40:01,634 - TornadoListener - INFO - ✅ Command 2da2972e-2e1f-413b-abdd-861ab255c511 executed successfully
+2025-08-08 15:40:07,830 - TornadoListener - INFO - Processing command: c0d49207-89fd-4174-a298-50de9aa3aec7 - update_slice_visibility
+2025-08-08 15:40:07,888 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=True, z=None
+2025-08-08 15:40:07,889 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=3
+2025-08-08 15:40:07,889 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to True
+2025-08-08 15:40:07,897 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=5, index=4, can_undo=True, undo_count=4
+2025-08-08 15:40:07,898 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=False, undo_count=4
+2025-08-08 15:40:07,976 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:40:08,028 - TornadoListener - INFO - ✅ Command c0d49207-89fd-4174-a298-50de9aa3aec7 executed successfully
+2025-08-08 15:40:14,229 - TornadoListener - INFO - Processing command: 207496cb-74b6-41b3-b344-2e1a7f4d1f54 - update_slice_visibility
+2025-08-08 15:40:14,284 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=None, y=None, z=True
+2025-08-08 15:40:14,285 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=True, z_visible=False, undo_count=4
+2025-08-08 15:40:14,285 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to True
+2025-08-08 15:40:14,293 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=6, index=5, can_undo=True, undo_count=5
+2025-08-08 15:40:14,293 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=True, undo_count=5
+2025-08-08 15:40:14,366 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:40:14,424 - TornadoListener - INFO - ✅ Command 207496cb-74b6-41b3-b344-2e1a7f4d1f54 executed successfully
+2025-08-08 15:40:22,744 - TornadoListener - INFO - Processing command: 745b9c76-3d8e-40cd-b7cc-fe2a56f5872c - undo
+2025-08-08 15:40:22,801 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=5
+2025-08-08 15:40:22,802 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=6, index=5, undo_count=5
+2025-08-08 15:40:22,802 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=6, current_index=5, can_undo=True
+2025-08-08 15:40:22,810 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 4
+2025-08-08 15:40:22,811 - TornadoListener - INFO - 🔍 AFTER undo: history_length=6, index=4, undo_count=4
+2025-08-08 15:40:22,811 - TornadoListener - INFO - ✅ Undo performed: new undo_count=4
+2025-08-08 15:40:22,891 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:40:22,942 - TornadoListener - INFO - ✅ Command 745b9c76-3d8e-40cd-b7cc-fe2a56f5872c executed successfully
+2025-08-08 15:40:27,077 - TornadoListener - INFO - Processing command: 588ade91-3b87-4ad1-a763-c4d21ac04434 - redo
+2025-08-08 15:40:27,145 - tornado_end.core.bookmark_engine_v2 - INFO - Redo: Advanced to history index 5
+2025-08-08 15:40:27,226 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:40:27,279 - TornadoListener - INFO - ✅ Command 588ade91-3b87-4ad1-a763-c4d21ac04434 executed successfully
+2025-08-08 15:40:52,247 - TornadoListener - INFO - 📤 Processed template request: 5 templates
+2025-08-08 15:41:00,637 - TornadoListener - INFO - Processing command: f176c150-2201-4d16-8f30-07e1d6bb15ce - load_template
+2025-08-08 15:41:00,761 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=7, index=6, can_undo=True, undo_count=6
+2025-08-08 15:41:00,761 - TornadoListener - INFO - ✅ Template loaded: default_bookmark.html
+2025-08-08 15:41:00,841 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:41:00,894 - TornadoListener - INFO - ✅ Command f176c150-2201-4d16-8f30-07e1d6bb15ce executed successfully
+2025-08-08 15:41:09,173 - TornadoListener - INFO - Processing command: 5dc45e49-9cf0-472c-82bf-5e9a8cf685c3 - load_template
+2025-08-08 15:41:09,528 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=8, index=7, can_undo=True, undo_count=7
+2025-08-08 15:41:09,529 - TornadoListener - INFO - ✅ Template loaded: ortho_view.html
+2025-08-08 15:41:09,611 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:41:09,662 - TornadoListener - INFO - ✅ Command 5dc45e49-9cf0-472c-82bf-5e9a8cf685c3 executed successfully
+2025-08-08 15:47:16,384 - TornadoListener - INFO - Processing command: 880b7724-6b57-4316-a9b5-226841597b12 - load_template
+2025-08-08 15:47:16,502 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=9, index=8, can_undo=True, undo_count=8
+2025-08-08 15:47:16,503 - TornadoListener - INFO - ✅ Template loaded: crossline_view.html
+2025-08-08 15:47:16,745 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:47:16,800 - TornadoListener - INFO - ✅ Command 880b7724-6b57-4316-a9b5-226841597b12 executed successfully
+2025-08-08 15:47:23,037 - TornadoListener - INFO - Processing command: c2c4c468-9935-433e-a01c-f89a9e53c8d2 - load_template
+2025-08-08 15:47:23,169 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=10, index=9, can_undo=True, undo_count=9
+2025-08-08 15:47:23,170 - TornadoListener - INFO - ✅ Template loaded: inline_view.html
+2025-08-08 15:47:23,251 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:47:23,299 - TornadoListener - INFO - ✅ Command c2c4c468-9935-433e-a01c-f89a9e53c8d2 executed successfully
+2025-08-08 15:47:27,431 - TornadoListener - INFO - Processing command: 287d1fb8-383d-4a9b-b6c2-e8725c904bad - load_template
+2025-08-08 15:47:27,549 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=11, index=10, can_undo=True, undo_count=10
+2025-08-08 15:47:27,549 - TornadoListener - INFO - ✅ Template loaded: top_view.html
+2025-08-08 15:47:27,629 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:47:27,682 - TornadoListener - INFO - ✅ Command 287d1fb8-383d-4a9b-b6c2-e8725c904bad executed successfully
+2025-08-08 15:48:07,080 - TornadoListener - INFO - Processing command: 3ceaf932-b648-4347-bdf4-63d725fafc23 - load_template
+2025-08-08 15:48:07,199 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=12, index=11, can_undo=True, undo_count=11
+2025-08-08 15:48:07,200 - TornadoListener - INFO - ✅ Template loaded: ortho_view.html
+2025-08-08 15:48:07,280 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:48:07,332 - TornadoListener - INFO - ✅ Command 3ceaf932-b648-4347-bdf4-63d725fafc23 executed successfully
+2025-08-08 15:58:49,793 - TornadoListener - INFO - Processing command: fb78ef2c-1179-44ac-a72d-9b2daa8e88e8 - update_slice_visibility
+2025-08-08 15:58:49,844 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=False
+2025-08-08 15:58:49,845 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=True, z_visible=True, undo_count=11
+2025-08-08 15:58:49,845 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to False
+2025-08-08 15:58:49,846 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from True to False
+2025-08-08 15:58:49,846 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from True to False
+2025-08-08 15:58:49,854 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=13, index=12, can_undo=True, undo_count=12
+2025-08-08 15:58:49,854 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=12
+2025-08-08 15:58:49,930 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:58:49,979 - TornadoListener - INFO - ✅ Command fb78ef2c-1179-44ac-a72d-9b2daa8e88e8 executed successfully
+2025-08-08 15:58:58,285 - TornadoListener - INFO - Processing command: c44f2c2c-81e9-440c-8532-6967a24e3f46 - update_slice_visibility
+2025-08-08 15:58:58,340 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=True, y=True, z=None
+2025-08-08 15:58:58,341 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=False, z_visible=False, undo_count=12
+2025-08-08 15:58:58,342 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from False to True
+2025-08-08 15:58:58,342 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to True
+2025-08-08 15:58:58,350 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=14, index=13, can_undo=True, undo_count=13
+2025-08-08 15:58:58,351 - TornadoListener - INFO - 📊 After update: x_visible=True, y_visible=True, z_visible=False, undo_count=13
+2025-08-08 15:58:58,440 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:58:58,491 - TornadoListener - INFO - ✅ Command c44f2c2c-81e9-440c-8532-6967a24e3f46 executed successfully
+2025-08-08 15:59:15,044 - TornadoListener - INFO - Processing command: 1e535a8b-c56b-47bb-9499-c2d52ba52749 - undo
+2025-08-08 15:59:15,104 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=13
+2025-08-08 15:59:15,104 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=14, index=13, undo_count=13
+2025-08-08 15:59:15,105 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=14, current_index=13, can_undo=True
+2025-08-08 15:59:15,113 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 12
+2025-08-08 15:59:15,113 - TornadoListener - INFO - 🔍 AFTER undo: history_length=14, index=12, undo_count=12
+2025-08-08 15:59:15,114 - TornadoListener - INFO - ✅ Undo performed: new undo_count=12
+2025-08-08 15:59:15,191 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:15,250 - TornadoListener - INFO - ✅ Command 1e535a8b-c56b-47bb-9499-c2d52ba52749 executed successfully
+2025-08-08 15:59:15,250 - TornadoListener - INFO - Processing command: 3ce11b64-bd3b-41b8-9772-df1aa501fe30 - undo
+2025-08-08 15:59:15,304 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=12
+2025-08-08 15:59:15,305 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=14, index=12, undo_count=12
+2025-08-08 15:59:15,305 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=14, current_index=12, can_undo=True
+2025-08-08 15:59:15,313 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 11
+2025-08-08 15:59:15,314 - TornadoListener - INFO - 🔍 AFTER undo: history_length=14, index=11, undo_count=11
+2025-08-08 15:59:15,314 - TornadoListener - INFO - ✅ Undo performed: new undo_count=11
+2025-08-08 15:59:15,392 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:15,446 - TornadoListener - INFO - ✅ Command 3ce11b64-bd3b-41b8-9772-df1aa501fe30 executed successfully
+2025-08-08 15:59:15,447 - TornadoListener - INFO - Processing command: 498f6656-e4fd-4869-9c1b-f9fd8c83ccee - undo
+2025-08-08 15:59:15,496 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=11
+2025-08-08 15:59:15,497 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=14, index=11, undo_count=11
+2025-08-08 15:59:15,498 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=14, current_index=11, can_undo=True
+2025-08-08 15:59:15,505 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 10
+2025-08-08 15:59:15,506 - TornadoListener - INFO - 🔍 AFTER undo: history_length=14, index=10, undo_count=10
+2025-08-08 15:59:15,506 - TornadoListener - INFO - ✅ Undo performed: new undo_count=10
+2025-08-08 15:59:15,583 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:15,638 - TornadoListener - INFO - ✅ Command 498f6656-e4fd-4869-9c1b-f9fd8c83ccee executed successfully
+2025-08-08 15:59:15,638 - TornadoListener - INFO - Processing command: 6c5f938b-501b-419b-9217-8c4381ce6ddf - undo
+2025-08-08 15:59:15,699 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=10
+2025-08-08 15:59:15,699 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=14, index=10, undo_count=10
+2025-08-08 15:59:15,700 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=14, current_index=10, can_undo=True
+2025-08-08 15:59:15,707 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 9
+2025-08-08 15:59:15,708 - TornadoListener - INFO - 🔍 AFTER undo: history_length=14, index=9, undo_count=9
+2025-08-08 15:59:15,708 - TornadoListener - INFO - ✅ Undo performed: new undo_count=9
+2025-08-08 15:59:15,778 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:15,831 - TornadoListener - INFO - ✅ Command 6c5f938b-501b-419b-9217-8c4381ce6ddf executed successfully
+2025-08-08 15:59:36,543 - TornadoListener - INFO - Processing command: 1b2bd031-71d0-42ed-b513-07c583d959e4 - update_position
+2025-08-08 15:59:36,597 - TornadoListener - INFO - 🔍 BEFORE position update: history_length=14, index=9, undo_count=9
+2025-08-08 15:59:36,598 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (159487.5, 111625.0, 3500.0) to (162112.5, 112487.5, 3500.0)
+2025-08-08 15:59:36,606 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=11, index=10, can_undo=True, undo_count=10
+2025-08-08 15:59:36,606 - TornadoListener - INFO - 🔍 AFTER position update: history_length=11, index=10, undo_count=10
+2025-08-08 15:59:36,689 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:36,741 - TornadoListener - INFO - ✅ Command 1b2bd031-71d0-42ed-b513-07c583d959e4 executed successfully
+2025-08-08 15:59:36,742 - TornadoListener - INFO - Processing command: f52a2e8f-3ff8-4ab8-ad35-f559034c99e5 - update_position
+2025-08-08 15:59:36,792 - TornadoListener - INFO - 🔍 BEFORE position update: history_length=11, index=10, undo_count=10
+2025-08-08 15:59:36,792 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (162112.5, 112487.5, 3500.0) to (158112.5, 112487.5, 3500.0)
+2025-08-08 15:59:36,801 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=12, index=11, can_undo=True, undo_count=11
+2025-08-08 15:59:36,801 - TornadoListener - INFO - 🔍 AFTER position update: history_length=12, index=11, undo_count=11
+2025-08-08 15:59:36,880 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:36,938 - TornadoListener - INFO - ✅ Command f52a2e8f-3ff8-4ab8-ad35-f559034c99e5 executed successfully
+2025-08-08 15:59:45,280 - TornadoListener - INFO - Processing command: 3909953e-e3eb-4a5d-bea3-5326762a6803 - undo
+2025-08-08 15:59:45,339 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=11
+2025-08-08 15:59:45,340 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=12, index=11, undo_count=11
+2025-08-08 15:59:45,341 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=12, current_index=11, can_undo=True
+2025-08-08 15:59:45,349 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 10
+2025-08-08 15:59:45,349 - TornadoListener - INFO - 🔍 AFTER undo: history_length=12, index=10, undo_count=10
+2025-08-08 15:59:45,350 - TornadoListener - INFO - ✅ Undo performed: new undo_count=10
+2025-08-08 15:59:45,431 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:45,485 - TornadoListener - INFO - ✅ Command 3909953e-e3eb-4a5d-bea3-5326762a6803 executed successfully
+2025-08-08 15:59:49,620 - TornadoListener - INFO - Processing command: a5466107-91f4-4f7f-86c7-8a9598700ac5 - undo
+2025-08-08 15:59:49,679 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=10
+2025-08-08 15:59:49,679 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=12, index=10, undo_count=10
+2025-08-08 15:59:49,680 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=12, current_index=10, can_undo=True
+2025-08-08 15:59:49,687 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 9
+2025-08-08 15:59:49,688 - TornadoListener - INFO - 🔍 AFTER undo: history_length=12, index=9, undo_count=9
+2025-08-08 15:59:49,688 - TornadoListener - INFO - ✅ Undo performed: new undo_count=9
+2025-08-08 15:59:49,774 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 15:59:49,826 - TornadoListener - INFO - ✅ Command a5466107-91f4-4f7f-86c7-8a9598700ac5 executed successfully
+2025-08-08 16:00:06,428 - TornadoListener - INFO - Processing command: 386daa19-9eb8-43e9-aa61-3799332c42ff - load_template
+2025-08-08 16:00:06,552 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=11, index=10, can_undo=True, undo_count=10
+2025-08-08 16:00:06,552 - TornadoListener - INFO - ✅ Template loaded: top_view.html
+2025-08-08 16:00:06,645 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:00:06,702 - TornadoListener - INFO - ✅ Command 386daa19-9eb8-43e9-aa61-3799332c42ff executed successfully
+2025-08-08 16:00:06,703 - TornadoListener - INFO - Processing command: b099eeb4-29ba-4515-aeb7-405cb17b7891 - load_template
+2025-08-08 16:00:06,817 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=12, index=11, can_undo=True, undo_count=11
+2025-08-08 16:00:06,818 - TornadoListener - INFO - ✅ Template loaded: top_view.html
+2025-08-08 16:00:06,904 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:00:06,957 - TornadoListener - INFO - ✅ Command b099eeb4-29ba-4515-aeb7-405cb17b7891 executed successfully
+2025-08-08 16:00:06,958 - TornadoListener - INFO - Processing command: 358e9a2f-2968-45ee-a669-a8a245f18ac7 - update_slice_visibility
+2025-08-08 16:00:07,014 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=True
+2025-08-08 16:00:07,014 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=False, z_visible=True, undo_count=11
+2025-08-08 16:00:07,015 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from False to False
+2025-08-08 16:00:07,015 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to False
+2025-08-08 16:00:07,016 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from True to True
+2025-08-08 16:00:07,023 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=13, index=12, can_undo=True, undo_count=12
+2025-08-08 16:00:07,024 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=True, undo_count=12
+2025-08-08 16:00:07,096 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:00:07,148 - TornadoListener - INFO - ✅ Command 358e9a2f-2968-45ee-a669-a8a245f18ac7 executed successfully
+2025-08-08 16:26:07,828 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 16:26:07,829 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 16:26:07,887 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 16:26:10,450 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 16:26:10,451 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 16:26:10,451 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 16:26:10,452 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 16:26:10,545 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 16:26:10,623 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 16:26:10,709 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 16:26:10,709 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=1, index=0
+2025-08-08 16:26:10,710 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 16:26:10,731 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 16:26:10,732 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 16:26:10,732 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 16:26:10,733 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 16:26:10,733 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 16:26:16,979 - TornadoListener - INFO - Processing command: 4b7c76ba-0cd4-47c2-91f7-d8de5c4099d1 - rotate_right
+2025-08-08 16:26:17,031 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, -0.7853981633974483) to (0.0, 0.39269908169872414, -0.39269908169872414)
+2025-08-08 16:26:17,041 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 16:26:17,122 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:26:17,176 - TornadoListener - INFO - ✅ Command 4b7c76ba-0cd4-47c2-91f7-d8de5c4099d1 executed successfully
+2025-08-08 16:26:21,299 - TornadoListener - INFO - Processing command: 7631dfeb-f6dd-4e6b-a031-06a1e646ece4 - undo
+2025-08-08 16:26:21,356 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=2
+2025-08-08 16:26:21,357 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=3, index=2, undo_count=2
+2025-08-08 16:26:21,358 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=3, current_index=2, can_undo=True
+2025-08-08 16:26:21,366 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 1
+2025-08-08 16:26:21,367 - TornadoListener - INFO - 🔍 AFTER undo: history_length=3, index=1, undo_count=1
+2025-08-08 16:26:21,367 - TornadoListener - INFO - ✅ Undo performed: new undo_count=1
+2025-08-08 16:26:21,447 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:26:21,500 - TornadoListener - INFO - ✅ Command 7631dfeb-f6dd-4e6b-a031-06a1e646ece4 executed successfully
+2025-08-08 16:26:29,775 - TornadoListener - INFO - Processing command: ba3a34d9-73ab-4f3c-a1d6-bbd5a331db4f - rotate_right
+2025-08-08 16:26:29,829 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, -0.7853981633974483) to (0.0, 0.39269908169872414, -0.39269908169872414)
+2025-08-08 16:26:29,837 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 16:26:29,918 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:26:29,968 - TornadoListener - INFO - ✅ Command ba3a34d9-73ab-4f3c-a1d6-bbd5a331db4f executed successfully
+2025-08-08 16:26:32,092 - TornadoListener - INFO - Processing command: 9b4a109c-df01-42b5-90d0-fbfa66b9ea22 - rotate_right
+2025-08-08 16:26:32,147 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, -0.39269908169872414) to (0.0, 0.39269908169872414, 0.0)
+2025-08-08 16:26:32,155 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 16:26:32,234 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:26:32,288 - TornadoListener - INFO - ✅ Command 9b4a109c-df01-42b5-90d0-fbfa66b9ea22 executed successfully
+2025-08-08 16:26:46,753 - TornadoListener - INFO - Processing command: 154c3fcf-aa41-446a-a783-1a3397cd41f6 - rotate_left
+2025-08-08 16:26:46,816 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, 0.0) to (0.0, 0.39269908169872414, -0.39269908169872414)
+2025-08-08 16:26:46,825 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=5, index=4, can_undo=True, undo_count=4
+2025-08-08 16:26:46,905 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:26:47,109 - TornadoListener - INFO - ✅ Command 154c3fcf-aa41-446a-a783-1a3397cd41f6 executed successfully
+2025-08-08 16:27:09,893 - TornadoListener - INFO - Processing command: ac4ceb25-55dc-42d0-91dd-dbd7ec79e1a7 - update_orientation
+2025-08-08 16:27:09,952 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, -0.39269908169872414) to (0.7853979999999998, 0.0, 0.0)
+2025-08-08 16:27:09,960 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=6, index=5, can_undo=True, undo_count=5
+2025-08-08 16:27:10,039 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:27:10,254 - TornadoListener - INFO - ✅ Command ac4ceb25-55dc-42d0-91dd-dbd7ec79e1a7 executed successfully
+2025-08-08 16:27:26,841 - TornadoListener - INFO - Processing command: c20ed0d3-0e8f-4edf-9da0-82e984a2aff3 - update_orientation
+2025-08-08 16:27:26,896 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.7853979999999998, 0.0, 0.0) to (0.0, 0.0, 0.7853979999999998)
+2025-08-08 16:27:26,905 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=7, index=6, can_undo=True, undo_count=6
+2025-08-08 16:27:26,990 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:27:27,050 - TornadoListener - INFO - ✅ Command c20ed0d3-0e8f-4edf-9da0-82e984a2aff3 executed successfully
+2025-08-08 16:27:35,364 - TornadoListener - INFO - Processing command: 5ef1d519-b557-4cb3-a5e0-4c2caba2a30f - undo
+2025-08-08 16:27:35,421 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=6
+2025-08-08 16:27:35,421 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=7, index=6, undo_count=6
+2025-08-08 16:27:35,422 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=7, current_index=6, can_undo=True
+2025-08-08 16:27:35,429 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 5
+2025-08-08 16:27:35,430 - TornadoListener - INFO - 🔍 AFTER undo: history_length=7, index=5, undo_count=5
+2025-08-08 16:27:35,431 - TornadoListener - INFO - ✅ Undo performed: new undo_count=5
+2025-08-08 16:27:35,509 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:27:35,559 - TornadoListener - INFO - ✅ Command 5ef1d519-b557-4cb3-a5e0-4c2caba2a30f executed successfully
+2025-08-08 16:27:47,947 - TornadoListener - INFO - Processing command: f74e77d5-d650-408d-ab14-b12cf3dd6556 - update_orientation
+2025-08-08 16:27:48,000 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.7853979999999998, 0.0, 0.0) to (0.0, 0.0, -0.7853979999999998)
+2025-08-08 16:27:48,008 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=7, index=6, can_undo=True, undo_count=6
+2025-08-08 16:27:48,087 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 16:27:48,142 - TornadoListener - INFO - ✅ Command f74e77d5-d650-408d-ab14-b12cf3dd6556 executed successfully
+2025-08-08 17:16:43,091 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-08 17:16:43,092 - TornadoListener - INFO - Cleaning up resources...
+2025-08-08 17:16:43,148 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-08 17:16:45,831 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-08 17:16:45,832 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-08 17:16:45,832 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-08 17:16:45,833 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-08 17:16:45,917 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-08 17:16:45,975 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-08 17:16:46,061 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-08 17:16:46,062 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=1, index=0
+2025-08-08 17:16:46,062 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-08 17:16:46,081 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 17:16:46,082 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=2, index=1, can_undo=True, undo_count=1
+2025-08-08 17:16:46,082 - TornadoListener - INFO - ✅ Bookmark engine initialized
+2025-08-08 17:16:46,083 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-08 17:16:46,083 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-08 17:31:48,507 - TornadoListener - INFO - Processing command: 0d53f987-cd0c-4232-ba65-7cb63ef3598a - load_template
+2025-08-08 17:31:48,638 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-08 17:31:48,639 - TornadoListener - INFO - ✅ Template loaded: top_view.html
+2025-08-08 17:31:48,720 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 17:31:48,775 - TornadoListener - INFO - ✅ Command 0d53f987-cd0c-4232-ba65-7cb63ef3598a executed successfully
+2025-08-08 17:31:59,156 - TornadoListener - INFO - Processing command: 03f03e5a-d2fc-4dd3-867b-c63566dfc8e5 - update_slice_visibility
+2025-08-08 17:31:59,214 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=False
+2025-08-08 17:31:59,215 - TornadoListener - INFO - 📊 Before update: x_visible=False, y_visible=False, z_visible=True, undo_count=2
+2025-08-08 17:31:59,215 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from False to False
+2025-08-08 17:31:59,216 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to False
+2025-08-08 17:31:59,216 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from True to False
+2025-08-08 17:31:59,224 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-08 17:31:59,225 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=3
+2025-08-08 17:31:59,306 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-08 17:31:59,357 - TornadoListener - INFO - ✅ Command 03f03e5a-d2fc-4dd3-867b-c63566dfc8e5 executed successfully
+2025-08-11 19:58:56,795 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-11 19:58:56,795 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-11 19:58:56,796 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-11 19:58:56,796 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-11 19:58:56,905 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-11 19:58:56,958 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-11 19:58:56,965 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-11 19:58:57,094 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-11 19:58:57,095 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=1, index=0
+2025-08-11 19:58:57,096 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-11 19:58:57,096 - shared.utils.coordinate_mapper - INFO - Crossline mapping: slope=6.25, intercept=-5.75
+2025-08-11 19:58:57,097 - shared.utils.coordinate_mapper - INFO - Inline mapping: slope=12.50, intercept=-11.75
+2025-08-11 19:58:57,098 - shared.utils.coordinate_mapper - INFO - Depth mapping: slope=1.00, intercept=0.00
+2025-08-11 19:58:57,098 - tornado_end.core.seismic_navigation - INFO - Seismic coordinate mappings: {'crossline': True, 'inline': True, 'depth': True}
+2025-08-11 19:58:57,099 - TornadoListener - INFO - ✅ Bookmark engine and seismic navigator initialized
+2025-08-11 19:58:57,100 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-11 19:58:57,101 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-11 19:58:59,668 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-11 19:58:59,669 - TornadoListener - INFO - Cleaning up resources...
+2025-08-11 19:58:59,768 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-11 20:04:34,430 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-11 20:04:34,431 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-11 20:04:34,432 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-11 20:04:34,432 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-11 20:04:34,529 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-11 20:04:34,593 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-11 20:04:34,601 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-11 20:04:34,684 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-11 20:04:34,685 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=1, index=0
+2025-08-11 20:04:34,686 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-11 20:04:34,687 - shared.utils.coordinate_mapper - INFO - Crossline mapping: slope=6.25, intercept=-5.75
+2025-08-11 20:04:34,688 - shared.utils.coordinate_mapper - INFO - Inline mapping: slope=12.50, intercept=-11.75
+2025-08-11 20:04:34,689 - shared.utils.coordinate_mapper - INFO - Depth mapping: slope=1.00, intercept=0.00
+2025-08-11 20:04:34,689 - tornado_end.core.seismic_navigation - INFO - Seismic coordinate mappings: {'crossline': True, 'inline': True, 'depth': True}
+2025-08-11 20:04:34,690 - TornadoListener - INFO - ✅ Bookmark engine and seismic navigator initialized
+2025-08-11 20:04:34,690 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-11 20:04:34,691 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-11 20:07:36,762 - TornadoListener - INFO - Processing command: f60cb263-e68e-4b33-abc7-1952a2a84949 - update_visibility
+2025-08-11 20:07:36,863 - tornado_end.core.bookmark_engine_v2 - INFO - horizon_visible changed from False to True
+2025-08-11 20:07:36,873 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-11 20:07:36,989 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:07:37,091 - TornadoListener - INFO - ✅ Command f60cb263-e68e-4b33-abc7-1952a2a84949 executed successfully
+2025-08-11 20:07:51,747 - TornadoListener - INFO - Processing command: 08baa1d7-820c-4b30-8b6b-8b97a69365b0 - update_visibility
+2025-08-11 20:07:51,800 - tornado_end.core.bookmark_engine_v2 - INFO - horizon_visible changed from True to False
+2025-08-11 20:07:51,807 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-11 20:07:51,920 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:07:51,973 - TornadoListener - INFO - ✅ Command 08baa1d7-820c-4b30-8b6b-8b97a69365b0 executed successfully
+2025-08-11 20:08:23,274 - TornadoListener - INFO - Processing command: 90a49cf7-6a86-4985-b2c5-bcc60cd68ac4 - update_visibility
+2025-08-11 20:08:23,381 - tornado_end.core.bookmark_engine_v2 - INFO - profile_visible changed from True to False
+2025-08-11 20:08:23,391 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=4, index=3, can_undo=True, undo_count=3
+2025-08-11 20:08:23,521 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:08:23,586 - TornadoListener - INFO - ✅ Command 90a49cf7-6a86-4985-b2c5-bcc60cd68ac4 executed successfully
+2025-08-11 20:09:24,107 - TornadoListener - INFO - Processing command: 5dd9e619-4a90-42cf-be00-d444e6bbed57 - update_visibility
+2025-08-11 20:09:24,213 - tornado_end.core.bookmark_engine_v2 - INFO - seismic_visible changed from True to False
+2025-08-11 20:09:24,224 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=5, index=4, can_undo=True, undo_count=4
+2025-08-11 20:09:24,340 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:09:24,436 - TornadoListener - INFO - ✅ Command 5dd9e619-4a90-42cf-be00-d444e6bbed57 executed successfully
+2025-08-11 20:09:32,777 - TornadoListener - INFO - Processing command: d31be1bf-5b7f-4acd-bfae-f42d2966dc76 - update_visibility
+2025-08-11 20:09:32,875 - tornado_end.core.bookmark_engine_v2 - INFO - profile_visible changed from False to True
+2025-08-11 20:09:32,883 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=6, index=5, can_undo=True, undo_count=5
+2025-08-11 20:09:33,004 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:09:33,103 - TornadoListener - INFO - ✅ Command d31be1bf-5b7f-4acd-bfae-f42d2966dc76 executed successfully
+2025-08-11 20:10:37,863 - TornadoListener - INFO - Processing command: 1a79babf-58ab-4c87-acba-dd4009f92407 - move_to_seismic_position
+2025-08-11 20:10:37,953 - TornadoListener - INFO - 🎯 Seismic navigation: crossline=25519.0, inline=None, depth=None
+2025-08-11 20:10:37,954 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (159487.5, 111625.0, 3500.0) to (159488, 111625, 3500)
+2025-08-11 20:10:37,962 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=7, index=6, can_undo=True, undo_count=6
+2025-08-11 20:10:37,963 - TornadoListener - INFO - ✅ Moved to seismic position: crossline=25519, inline=8931, depth=3500
+2025-08-11 20:10:37,964 - TornadoListener - INFO -    Cartesian coordinates: X=159488, Y=111625, Z=3500
+2025-08-11 20:10:38,081 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:10:38,176 - TornadoListener - INFO - ✅ Command 1a79babf-58ab-4c87-acba-dd4009f92407 executed successfully
+2025-08-11 20:10:48,587 - TornadoListener - INFO - Processing command: 82637add-93b0-4817-b5ef-bdaa64231130 - undo
+2025-08-11 20:10:48,682 - TornadoListener - INFO - 🔄 Processing undo request: can_undo=True, undo_count=6
+2025-08-11 20:10:48,684 - TornadoListener - INFO - 🔍 BEFORE undo: history_length=7, index=6, undo_count=6
+2025-08-11 20:10:48,685 - tornado_end.core.bookmark_engine_v2 - INFO - Undo requested: history_length=7, current_index=6, can_undo=True
+2025-08-11 20:10:48,694 - tornado_end.core.bookmark_engine_v2 - INFO - Undo: Reverted to history index 5
+2025-08-11 20:10:48,695 - TornadoListener - INFO - 🔍 AFTER undo: history_length=7, index=5, undo_count=5
+2025-08-11 20:10:48,695 - TornadoListener - INFO - ✅ Undo performed: new undo_count=5
+2025-08-11 20:10:48,809 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:10:49,081 - TornadoListener - INFO - ✅ Command 82637add-93b0-4817-b5ef-bdaa64231130 executed successfully
+2025-08-11 20:11:39,304 - TornadoListener - INFO - Processing command: b40c57dd-479d-415d-bbd4-76107038a9c0 - move_to_seismic_position
+2025-08-11 20:11:39,405 - TornadoListener - INFO - 🎯 Seismic navigation: crossline=25599.0, inline=None, depth=None
+2025-08-11 20:11:39,406 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (159487.5, 111625.0, 3500.0) to (159988, 111625, 3500)
+2025-08-11 20:11:39,416 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=7, index=6, can_undo=True, undo_count=6
+2025-08-11 20:11:39,417 - TornadoListener - INFO - ✅ Moved to seismic position: crossline=25599, inline=8931, depth=3500
+2025-08-11 20:11:39,418 - TornadoListener - INFO -    Cartesian coordinates: X=159988, Y=111625, Z=3500
+2025-08-11 20:11:39,538 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:11:39,632 - TornadoListener - INFO - ✅ Command b40c57dd-479d-415d-bbd4-76107038a9c0 executed successfully
+2025-08-11 20:11:54,222 - TornadoListener - INFO - Processing command: 7a870509-7aa7-41e7-8f08-9bfd151dc068 - move_to_seismic_position
+2025-08-11 20:11:54,508 - TornadoListener - INFO - 🎯 Seismic navigation: crossline=25559.0, inline=None, depth=None
+2025-08-11 20:11:54,510 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (159988, 111625, 3500) to (159738, 111625, 3500)
+2025-08-11 20:11:54,520 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=8, index=7, can_undo=True, undo_count=7
+2025-08-11 20:11:54,521 - TornadoListener - INFO - ✅ Moved to seismic position: crossline=25559, inline=8931, depth=3500
+2025-08-11 20:11:54,522 - TornadoListener - INFO -    Cartesian coordinates: X=159738, Y=111625, Z=3500
+2025-08-11 20:11:54,641 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:11:54,736 - TornadoListener - INFO - ✅ Command 7a870509-7aa7-41e7-8f08-9bfd151dc068 executed successfully
+2025-08-11 20:12:43,118 - TornadoListener - INFO - Processing command: 0bba8aee-6089-49ab-992b-c95e41c05f74 - zoom_in
+2025-08-11 20:12:43,428 - tornado_end.core.bookmark_engine_v2 - INFO - Scale changed from (0.8121716898732568, 0.8121716898732568) to (0.8933888588605826, 0.8933888588605826)
+2025-08-11 20:12:43,438 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=9, index=8, can_undo=True, undo_count=8
+2025-08-11 20:12:43,529 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:12:43,621 - TornadoListener - INFO - ✅ Command 0bba8aee-6089-49ab-992b-c95e41c05f74 executed successfully
+2025-08-11 20:12:54,018 - TornadoListener - INFO - Processing command: 27d51ca9-92c8-4084-ac55-a9fe4adb3489 - zoom_in
+2025-08-11 20:12:54,107 - tornado_end.core.bookmark_engine_v2 - INFO - Scale changed from (0.8933888588605826, 0.8933888588605826) to (0.9827277447466409, 0.9827277447466409)
+2025-08-11 20:12:54,115 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=10, index=9, can_undo=True, undo_count=9
+2025-08-11 20:12:54,235 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:12:54,528 - TornadoListener - INFO - ✅ Command 27d51ca9-92c8-4084-ac55-a9fe4adb3489 executed successfully
+2025-08-11 20:13:09,247 - TornadoListener - INFO - Processing command: b401fb0c-1ae6-427c-8f8e-da1b8bbf6fc9 - zoom_in
+2025-08-11 20:13:09,356 - tornado_end.core.bookmark_engine_v2 - INFO - Scale changed from (0.9827277447466409, 0.9827277447466409) to (1.081000519221305, 1.081000519221305)
+2025-08-11 20:13:09,366 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=11, index=10, can_undo=True, undo_count=10
+2025-08-11 20:13:09,490 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:13:09,546 - TornadoListener - INFO - ✅ Command b401fb0c-1ae6-427c-8f8e-da1b8bbf6fc9 executed successfully
+2025-08-11 20:13:22,185 - TornadoListener - INFO - Processing command: 436c3981-bd63-4a7f-8763-6a38e8507bcb - zoom_in
+2025-08-11 20:13:22,283 - tornado_end.core.bookmark_engine_v2 - INFO - Scale changed from (1.081000519221305, 1.081000519221305) to (1.1891005711434357, 1.1891005711434357)
+2025-08-11 20:13:22,290 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=12, index=11, can_undo=True, undo_count=11
+2025-08-11 20:13:22,405 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:13:22,509 - TornadoListener - INFO - ✅ Command 436c3981-bd63-4a7f-8763-6a38e8507bcb executed successfully
+2025-08-11 20:13:41,194 - TornadoListener - INFO - Processing command: 349c0a11-eb19-4c4e-8496-67d1cafbc4af - zoom_in
+2025-08-11 20:13:41,262 - tornado_end.core.bookmark_engine_v2 - INFO - Scale changed from (1.1891005711434357, 1.1891005711434357) to (1.3080106282577795, 1.3080106282577795)
+2025-08-11 20:13:41,274 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=13, index=12, can_undo=True, undo_count=12
+2025-08-11 20:13:41,402 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:13:41,493 - TornadoListener - INFO - ✅ Command 349c0a11-eb19-4c4e-8496-67d1cafbc4af executed successfully
+2025-08-11 20:13:49,900 - TornadoListener - INFO - Processing command: 53af69eb-afa4-4f8e-adb0-cfcc4c4ea569 - move_to_seismic_position
+2025-08-11 20:13:50,000 - TornadoListener - INFO - 🎯 Seismic navigation: crossline=25431.0, inline=7878.0, depth=2231.0
+2025-08-11 20:13:50,002 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (159738, 111625, 3500) to (158938, 98463, 2231)
+2025-08-11 20:13:50,011 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=14, index=13, can_undo=True, undo_count=13
+2025-08-11 20:13:50,013 - TornadoListener - INFO - ✅ Moved to seismic position: crossline=25431, inline=7878, depth=2231
+2025-08-11 20:13:50,013 - TornadoListener - INFO -    Cartesian coordinates: X=158938, Y=98463, Z=2231
+2025-08-11 20:13:50,125 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:13:50,433 - TornadoListener - INFO - ✅ Command 53af69eb-afa4-4f8e-adb0-cfcc4c4ea569 executed successfully
+2025-08-11 20:15:05,325 - TornadoListener - INFO - Processing command: b3a07214-1735-4774-ac1f-a9090dee2cc5 - move_to_seismic_position
+2025-08-11 20:15:05,395 - TornadoListener - INFO - 🎯 Seismic navigation: crossline=25575.0, inline=5500.0, depth=1800.0
+2025-08-11 20:15:05,396 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (158938, 98463, 2231) to (159838, 68738, 1800)
+2025-08-11 20:15:05,406 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=15, index=14, can_undo=True, undo_count=14
+2025-08-11 20:15:05,407 - TornadoListener - INFO - ✅ Moved to seismic position: crossline=25575, inline=5500, depth=1800
+2025-08-11 20:15:05,407 - TornadoListener - INFO -    Cartesian coordinates: X=159838, Y=68738, Z=1800
+2025-08-11 20:15:05,525 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 20:15:05,615 - TornadoListener - INFO - ✅ Command b3a07214-1735-4774-ac1f-a9090dee2cc5 executed successfully
+2025-08-11 20:15:24,086 - TornadoListener - INFO - Received interrupt signal - exiting development mode
+2025-08-11 20:15:24,087 - TornadoListener - INFO - Cleaning up resources...
+2025-08-11 20:15:24,195 - TornadoListener - ERROR - Error closing database: 'DatabaseConfig' object has no attribute 'cleanup'
+2025-08-11 21:34:46,692 - TornadoListener - INFO - 🚀 Starting Tornado listener service...
+2025-08-11 21:34:46,693 - TornadoListener - INFO - Initializing seismic view in Tornado...
+2025-08-11 21:34:46,694 - TornadoListener - WARNING - Tornado API not available - skipping seismic initialization
+2025-08-11 21:34:46,694 - TornadoListener - INFO - Initializing SQLite database connection...
+2025-08-11 21:34:46,829 - TornadoListener - INFO - ✅ SQLite database connection established
+2025-08-11 21:34:46,897 - TornadoListener - INFO - Initializing bookmark engine...
+2025-08-11 21:34:46,906 - tornado_end.core.bookmark_engine_v2 - INFO - Calling final update_params() in initialization
+2025-08-11 21:34:46,998 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=1, index=0, can_undo=False, undo_count=0
+2025-08-11 21:34:46,999 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization: loaded template, history_length=1, index=0
+2025-08-11 21:34:47,000 - tornado_end.core.bookmark_engine_v2 - INFO - Initialization complete: history_length=1, index=0, can_undo=False, undo_count=0
+2025-08-11 21:34:47,001 - shared.utils.coordinate_mapper - INFO - Crossline mapping: slope=6.25, intercept=-5.75
+2025-08-11 21:34:47,001 - shared.utils.coordinate_mapper - INFO - Inline mapping: slope=12.50, intercept=-11.75
+2025-08-11 21:34:47,002 - shared.utils.coordinate_mapper - INFO - Depth mapping: slope=1.00, intercept=0.00
+2025-08-11 21:34:47,002 - tornado_end.core.seismic_navigation - INFO - Seismic coordinate mappings: {'crossline': True, 'inline': True, 'depth': True}
+2025-08-11 21:34:47,003 - TornadoListener - INFO - ✅ Bookmark engine and seismic navigator initialized
+2025-08-11 21:34:47,004 - TornadoListener - INFO - ✅ Tornado listener service started successfully
+2025-08-11 21:34:47,004 - TornadoListener - INFO - 🔄 Entering main processing loop...
+2025-08-11 21:34:47,075 - TornadoListener - INFO - Processing command: d4da28f5-c6a1-41d9-a206-92ac68140486 - update_orientation
+2025-08-11 21:34:47,171 - tornado_end.core.bookmark_engine_v2 - INFO - Position changed from (0.0, 0.39269908169872414, -0.7853981633974483) to (-3.141592653589793, 0.0, 0.0)
+2025-08-11 21:34:47,182 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=2, index=1, can_undo=True, undo_count=1
+2025-08-11 21:34:47,298 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 21:34:47,393 - TornadoListener - INFO - ✅ Command d4da28f5-c6a1-41d9-a206-92ac68140486 executed successfully
+2025-08-11 21:35:02,029 - TornadoListener - INFO - Processing command: aa0c9c2e-3b5e-4fbe-9635-4b6d835e99c0 - update_slice_visibility
+2025-08-11 21:35:02,131 - TornadoListener - INFO - 🔄 Processing slice visibility update: x=False, y=False, z=False
+2025-08-11 21:35:02,133 - TornadoListener - INFO - 📊 Before update: x_visible=True, y_visible=False, z_visible=False, undo_count=1
+2025-08-11 21:35:02,133 - tornado_end.core.bookmark_engine_v2 - INFO - x_visible changed from True to False
+2025-08-11 21:35:02,134 - tornado_end.core.bookmark_engine_v2 - INFO - y_visible changed from False to False
+2025-08-11 21:35:02,135 - tornado_end.core.bookmark_engine_v2 - INFO - z_visible changed from False to False
+2025-08-11 21:35:02,143 - tornado_end.core.bookmark_engine_v2 - INFO - History updated: length=3, index=2, can_undo=True, undo_count=2
+2025-08-11 21:35:02,143 - TornadoListener - INFO - 📊 After update: x_visible=False, y_visible=False, z_visible=False, undo_count=2
+2025-08-11 21:35:02,251 - TornadoListener - INFO - 📤 State update sent to NLP via database
+2025-08-11 21:35:02,349 - TornadoListener - INFO - ✅ Command aa0c9c2e-3b5e-4fbe-9635-4b6d835e99c0 executed successfully

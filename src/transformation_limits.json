@@ -1,0 +1,54 @@
+{
+  "_comment": "Transformation Limits Configuration - Edit these values to change system limits",
+  "_instructions": "After editing, use 'reload limits' command in NLP terminal to apply changes",
+  
+  "position": {
+    "x": {
+      "min": 100000,
+      "max": 200000,
+      "description": "Crossline position range"
+    },
+    "y": {
+      "min": 100000,
+      "max": 150000,
+      "description": "Inline position range"
+    },
+    "z": {
+      "min": 1000,
+      "max": 6000,
+      "description": "Depth position range"
+    }
+  },
+  "scale": {
+    "x": {
+      "min": 0.1,
+      "max": 3.0,
+      "description": "X scale factor range"
+    },
+    "y": {
+      "min": 0.1,
+      "max": 3.0,
+      "description": "Y scale factor range"
+    }
+  },
+  "rotation": {
+    "auto_normalize": true,
+    "description": "All rotations auto-normalized to -π to π range"
+  },
+  "gain": {
+    "min": 0.1,
+    "max": 5.0,
+    "description": "Gain value range"
+  },
+  "colormap": {
+    "min": 0,
+    "max": 15,
+    "integer_only": true,
+    "description": "Colormap index range (integer only)"
+  },
+  "system": {
+    "max_commands_per_cycle": 10,
+    "max_clarifications": 2,
+    "description": "System processing limits"
+  }
+}

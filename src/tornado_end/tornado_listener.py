@@ -19,8 +19,10 @@ import sys
 from pathlib import Path
 import platform
 
+print('here')
 venv_site_packages = Path.cwd().resolve() / '.linux-venv' / 'lib' / 'python3.6' / 'site-packages'
 sys.path.insert(0, str(venv_site_packages))
+print('here2')
 
 import sys
 import time
@@ -35,14 +37,13 @@ import logging
 from datetime import datetime, timezone
 
 # Add src to path for imports
-sys.path.append(str(Path.cwd().resolve()/ 'src'))
+sys.path.append(str(Path.cwd().resolve() / 'src')) #src/
 
 # Import Tornado API modules (these are available directly in Tornado environment)
 try:
     # Specific imports from vision module - everything should be in vision
-    from vision import (
-        vision
-    )
+    from base import Volume, HorizonGroup
+    from vision import vision
     TORNADO_AVAILABLE = True
 except ImportError:
     # For development/testing outside Tornado
@@ -50,12 +51,14 @@ except ImportError:
     TORNADO_AVAILABLE = False
 
 # Import our bookmark engine and Database components
-from core.bookmark_engine_v2 import BookmarkHTMLEngineV2
-from database.database_config import DatabaseConfig
-from database.command_queue_manager import CommandQueueManager
-from database.state_manager import TornadoStateManager
-from protocols.jsonrpc_protocol import JSONRPCProtocol, TornadoStateProtocol
-from utils.config_loader import get_config
+from tornado_end.core.bookmark_engine_v2 import BookmarkHTMLEngineV2
+from tornado_end.core.seismic_navigation import SeismicNavigator
+from shared.database.database_config import DatabaseConfig
+from shared.database.command_queue_manager import CommandQueueManager
+from shared.database.state_manager import TornadoStateManager
+from shared.protocols.jsonrpc_protocol import JSONRPCProtocol, TornadoStateProtocol
+from shared.utils.config_loader import get_config
+from shared.utils.limits_loader import get_limits
 
 
 class TornadoListener:
@@ -81,6 +84,7 @@ class TornadoListener:
         # Command method mapping
         self.command_methods = {
             'update_position': self.handle_update_position,
+            'move_to_seismic_position': self.handle_move_to_seismic_position,
             'update_orientation': self.handle_update_orientation,
             'update_scale': self.handle_update_scale,
             'update_shift': self.handle_update_shift,
@@ -103,7 +107,8 @@ class TornadoListener:
             'reset_parameters': self.handle_reset_parameters,
             'reload_template': self.handle_reload_template,
             'load_template': self.handle_load_template,  # Add missing load_template mapping
-            'query_state': self.handle_query_state
+            'query_state': self.handle_query_state,
+            'reload_context': self.handle_reload_context
         }
     
     def setup_logging(self):
@@ -137,20 +142,22 @@ class TornadoListener:
                 seismic_path = config.get_seismic_path()
                 self.logger.info(f"Loading seismic data from: {seismic_path}")
                 vision.loadSeismic(seismic_path)
-                
-                '''
-                # Show seismic data initially
-                self.logger.info("Setting seismic data visibility...")
-                vision.setDataTypeVis(DataVis.SEIS)
-                
-                # Load default bookmark with proper slice visibility
-                # This replaces: vision.setSliceVis(SliceVis.X)
-                self.logger.info("Loading default bookmark...")
-                default_bookmark = BookmarkLocation()
-                default_bookmark.load('default_bookmark.html')
-                default_bookmark.selectBookmark('default')
-                default_bookmark.updateDisplay(True)
-                '''
+
+                # load horizon
+                horizon_path = config.get_horizon_path()
+                self.logger.info(f"Loading Horizon data from: {horizon_path}")
+                horizon = HorizonGroup()
+                horizon.load(horizon_path)
+                vision.addHorizonGroup(horizon)
+
+                # load Q factor map
+                attr_path = config.get_attr_path()
+                self.logger.info(f"Loading Attribute data from: {attr_path}")
+                attr = Volume()
+                attr.load(attr_path)
+                attr.setDomain(1)
+                vision.addAttribute(attr)
+
                 
                 self.logger.info("✅ Seismic view initialized successfully")
             else:
@@ -206,7 +213,10 @@ class TornadoListener:
             default_template = config.get_default_template()
             self.bookmark_engine = BookmarkHTMLEngineV2(default_template, in_tornado=TORNADO_AVAILABLE)
             
-            self.logger.info("✅ Bookmark engine initialized")
+            # Initialize seismic navigator
+            self.seismic_navigator = SeismicNavigator(self.bookmark_engine)
+            
+            self.logger.info("✅ Bookmark engine and seismic navigator initialized")
             return True
             
         except Exception as e:
@@ -269,7 +279,7 @@ class TornadoListener:
             pending_commands = self.queue_manager.get_pending_commands(self.user_id)
             
             # Limit processing to prevent infinite loops
-            max_commands_per_cycle = 10
+            max_commands_per_cycle = get_limits().get_system_limit("max_commands_per_cycle")
             processed_count = 0
             
             for command in pending_commands:
@@ -298,8 +308,6 @@ class TornadoListener:
                     
                     # Update command status to processing (don't fail if this fails)
                     try:
-                        # Mark processing start time to prevent duplicate processing
-                        self.queue_manager.mark_command_processing(cmd_id)
                         self.queue_manager.update_command_status(cmd_id, 'processing')
                     except Exception as status_error:
                         self.logger.warning(f"⚠️ Could not update status to processing for {cmd_id}: {status_error}")
@@ -498,17 +506,72 @@ class TornadoListener:
             'new_position': {'x': x, 'y': y, 'z': z}
         }
     
+    def handle_move_to_seismic_position(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle move_to_seismic_position command"""
+        crossline = params.get('crossline')
+        inline = params.get('inline')
+        depth = params.get('depth')
+        
+        # Debug logging for seismic navigation
+        self.logger.info(f"🎯 Seismic navigation: crossline={crossline}, inline={inline}, depth={depth}")
+        
+        # Use seismic navigator for coordinate transformation
+        result = self.seismic_navigator.move_to_seismic_position(crossline, inline, depth)
+        
+        # Log the result
+        if 'error' not in result:
+            seismic_coords = result['seismic_coordinates']
+            cartesian_coords = result['cartesian_coordinates']
+            self.logger.info(f"✅ Moved to seismic position: crossline={int(seismic_coords['crossline'])}, inline={int(seismic_coords['inline'])}, depth={int(seismic_coords['depth'])}")
+            self.logger.info(f"   Cartesian coordinates: X={int(cartesian_coords['x'])}, Y={int(cartesian_coords['y'])}, Z={int(cartesian_coords['z'])}")
+        else:
+            self.logger.error(f"❌ Seismic navigation failed: {result['error']}")
+        
+        return result
+    
+    def handle_reload_context(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle reload_context command"""
+        try:
+            from shared.utils.context_loader import reload_context_loader, get_domain_context
+            
+            # Reload context
+            loader = reload_context_loader()
+            context = get_domain_context()
+            
+            self.logger.info("🔄 Domain context reloaded from context.json")
+            
+            return {
+                'message': 'Domain context reloaded successfully',
+                'context_length': len(context),
+                'context_preview': context[:100] + '...' if len(context) > 100 else context
+            }
+            
+        except Exception as e:
+            self.logger.error(f"❌ Error reloading context: {e}")
+            return {
+                'message': f'Failed to reload context: {str(e)}',
+                'error': str(e)
+            }
+    
     def handle_update_orientation(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Handle update_orientation command"""
         rot1 = params.get('rot1')
         rot2 = params.get('rot2')
         rot3 = params.get('rot3')
         
+        # Normalize all rotation angles to -π to π range
+        if rot1 is not None:
+            rot1 = self._normalize_angle(rot1)
+        if rot2 is not None:
+            rot2 = self._normalize_angle(rot2)
+        if rot3 is not None:
+            rot3 = self._normalize_angle(rot3)
+        
         self.bookmark_engine.adjust_orientation(rot1, rot2, rot3)
         self.bookmark_engine.update_params()
         
         return {
-            'message': f'Orientation updated to rot1={rot1}, rot2={rot2}, rot3={rot3}',
+            'message': f'Orientation updated to rot1={rot1:.3f}, rot2={rot2:.3f}, rot3={rot3:.3f} (normalized to -π to π)',
             'new_orientation': {'rot1': rot1, 'rot2': rot2, 'rot3': rot3}
         }
     
@@ -545,6 +608,7 @@ class TornadoListener:
         attribute = params.get('attribute')
         horizon = params.get('horizon')
         well = params.get('well')
+        profile = params.get('profile')
         
         # Use individual toggle_data_visibility calls for each data type
         if seismic is not None:
@@ -555,6 +619,8 @@ class TornadoListener:
             self.bookmark_engine.toggle_data_visibility('horizon', horizon)
         if well is not None:
             self.bookmark_engine.toggle_data_visibility('well', well)
+        if profile is not None:
+            self.bookmark_engine.toggle_data_visibility('profile', profile)
             
         self.bookmark_engine.update_params()
         
@@ -564,7 +630,8 @@ class TornadoListener:
                 'seismic': seismic,
                 'attribute': attribute,
                 'horizon': horizon,
-                'well': well
+                'well': well,
+                'profile': profile
             }
         }
     
@@ -614,6 +681,16 @@ class TornadoListener:
         """Handle update_colormap command"""
         colormap_index = params.get('colormap_index')
         
+        # Ensure colormap_index is an integer and within valid range
+        if colormap_index is not None:
+            limits = get_limits()
+            valid, message = limits.validate_colormap(colormap_index)
+            if not valid:
+                raise ValueError(message)
+            colormap_index = int(colormap_index)  # Ensure it's an integer
+        else:
+            raise ValueError("colormap_index parameter is required")
+        
         self.bookmark_engine.change_colormap(colormap_index)
         self.bookmark_engine.update_params()
         
@@ -635,7 +712,7 @@ class TornadoListener:
         }
     
     def handle_increase_gain(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle increase_gain command"""
+        """Handle increase_gain command - increases gain by 4dB"""
         # Get current gain value (approximate from seismic range)
         current_min, current_max = self.bookmark_engine.curr_params.seismic_range
         current_range = current_max - current_min
@@ -648,20 +725,23 @@ class TornadoListener:
         else:
             current_gain = 1.0
         
-        # Increase gain by 20% (makes range narrower, contrast higher)
-        new_gain = current_gain * 1.2
+        # Increase gain by 4dB: multiply by 10^(4/20) ≈ 1.585
+        # This makes the range narrower (higher contrast)
+        db_factor = 10 ** (4.0 / 20.0)  # ≈ 1.585
+        new_gain = current_gain * db_factor
         
         # Apply new gain
         self.bookmark_engine.adjust_gain(new_gain)
         self.bookmark_engine.update_params()
         
         return {
-            'message': f'Gain increased to {new_gain:.1f}',
-            'new_gain': new_gain
+            'message': f'Gain increased by 4dB (factor: {db_factor:.2f}, new gain: {new_gain:.2f})',
+            'new_gain': new_gain,
+            'db_change': '+4dB'
         }
     
     def handle_decrease_gain(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle decrease_gain command"""
+        """Handle decrease_gain command - decreases gain by 4dB"""
         # Get current gain value (approximate from seismic range)
         current_min, current_max = self.bookmark_engine.curr_params.seismic_range
         current_range = current_max - current_min
@@ -674,58 +754,85 @@ class TornadoListener:
         else:
             current_gain = 1.0
         
-        # Decrease gain by 20% (makes range wider, contrast lower)
-        new_gain = current_gain * 0.8
+        # Decrease gain by 4dB: multiply by 10^(-4/20) ≈ 0.631
+        # This makes the range wider (lower contrast)
+        db_factor = 10 ** (-4.0 / 20.0)  # ≈ 0.631
+        new_gain = current_gain * db_factor
         
         # Apply new gain
         self.bookmark_engine.adjust_gain(new_gain)
         self.bookmark_engine.update_params()
         
         return {
-            'message': f'Gain decreased to {new_gain:.1f}',
-            'new_gain': new_gain
+            'message': f'Gain decreased by 4dB (factor: {db_factor:.2f}, new gain: {new_gain:.2f})',
+            'new_gain': new_gain,
+            'db_change': '-4dB'
         }
     
+    def _normalize_angle(self, angle: float) -> float:
+        """
+        Normalize angle to -π to π range using modulo arithmetic
+        
+        Examples:
+        - 0 → 0
+        - π → π  
+        - -π → -π
+        - 2π → 0
+        - 3π → -π
+        - -2π → 0
+        - 5π → -π
+        """
+        import math
+        # Normalize to -π to π range
+        normalized = ((angle + math.pi) % (2 * math.pi)) - math.pi
+        return normalized
+    
     def handle_rotate_left(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle rotate_left command"""
+        """Handle rotate_left command - rotates by π/8 radians (22.5 degrees)"""
+        import math
+        
         # Get current orientation
         current_rot1, current_rot2, current_rot3 = self.bookmark_engine.curr_params.orient
         
-        # Rotate left by 0.1 radians on Z-axis
-        new_rot3 = current_rot3 - 0.1
+        # Rotate left by π/8 radians on Z-axis (22.5 degrees)
+        rotation_amount = math.pi / 8  # π/8 radians
+        new_rot3 = current_rot3 - rotation_amount
         
-        # Keep within bounds
-        if new_rot3 < -3.14159:
-            new_rot3 = 3.14159
+        # Normalize to -π to π range using modulo arithmetic
+        new_rot3 = self._normalize_angle(new_rot3)
         
         # Apply new orientation
         self.bookmark_engine.adjust_orientation(current_rot1, current_rot2, new_rot3)
         self.bookmark_engine.update_params()
         
         return {
-            'message': 'Rotated left',
-            'new_rotation': new_rot3
+            'message': f'Rotated left by π/8 radians ({rotation_amount:.3f} rad, {math.degrees(rotation_amount):.1f}°)',
+            'new_rotation': new_rot3,
+            'rotation_amount_radians': rotation_amount
         }
     
     def handle_rotate_right(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle rotate_right command"""
+        """Handle rotate_right command - rotates by π/8 radians (22.5 degrees)"""
+        import math
+        
         # Get current orientation
         current_rot1, current_rot2, current_rot3 = self.bookmark_engine.curr_params.orient
         
-        # Rotate right by 0.1 radians on Z-axis
-        new_rot3 = current_rot3 + 0.1
+        # Rotate right by π/8 radians on Z-axis (22.5 degrees)
+        rotation_amount = math.pi / 8  # π/8 radians
+        new_rot3 = current_rot3 + rotation_amount
         
-        # Keep within bounds
-        if new_rot3 > 3.14159:
-            new_rot3 = -3.14159
+        # Normalize to -π to π range using modulo arithmetic
+        new_rot3 = self._normalize_angle(new_rot3)
         
         # Apply new orientation
         self.bookmark_engine.adjust_orientation(current_rot1, current_rot2, new_rot3)
         self.bookmark_engine.update_params()
         
         return {
-            'message': 'Rotated right',
-            'new_rotation': new_rot3
+            'message': f'Rotated right by π/8 radians ({rotation_amount:.3f} rad, {math.degrees(rotation_amount):.1f}°)',
+            'new_rotation': new_rot3,
+            'rotation_amount_radians': rotation_amount
         }
     
     def handle_zoom_in(self, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -734,8 +841,11 @@ class TornadoListener:
         current_scale_x, current_scale_y = self.bookmark_engine.curr_params.scale
         
         # Increase scale by 10%
-        new_scale_x = min(3.0, current_scale_x * 1.1)
-        new_scale_y = min(3.0, current_scale_y * 1.1)
+        limits = get_limits()
+        _, max_scale_x = limits.get_scale_limits("x")
+        _, max_scale_y = limits.get_scale_limits("y")
+        new_scale_x = min(max_scale_x, current_scale_x * 1.1)
+        new_scale_y = min(max_scale_y, current_scale_y * 1.1)
         
         # Apply new scale
         self.bookmark_engine.adjust_zoom(scale_x=new_scale_x, scale_y=new_scale_y)
@@ -752,8 +862,11 @@ class TornadoListener:
         current_scale_x, current_scale_y = self.bookmark_engine.curr_params.scale
         
         # Decrease scale by 10%
-        new_scale_x = max(0.1, current_scale_x * 0.9)
-        new_scale_y = max(0.1, current_scale_y * 0.9)
+        limits = get_limits()
+        min_scale_x, _ = limits.get_scale_limits("x")
+        min_scale_y, _ = limits.get_scale_limits("y")
+        new_scale_x = max(min_scale_x, current_scale_x * 0.9)
+        new_scale_y = max(min_scale_y, current_scale_y * 0.9)
         
         # Apply new scale
         self.bookmark_engine.adjust_zoom(scale_x=new_scale_x, scale_y=new_scale_y)

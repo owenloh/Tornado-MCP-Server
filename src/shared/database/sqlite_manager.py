@@ -29,7 +29,7 @@ class SQLiteManager:
         """
         if db_path is None:
             # Default to database/tornado_mcp.db in project root
-            project_root = Path(__file__).resolve().parent.parent.parent
+            project_root = Path(__file__).resolve().parent.parent.parent.parent
             db_dir = project_root / "database"
             db_dir.mkdir(exist_ok=True)
             self.db_path = str(db_dir / "tornado_mcp.db")

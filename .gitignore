@@ -19,5 +19,6 @@ Tornado API documentation/
 # copy over venv instead
 *.zip
 
-.tornado_listener.log
+tornado_listener.log
 
+database\tornado_mcp.db
